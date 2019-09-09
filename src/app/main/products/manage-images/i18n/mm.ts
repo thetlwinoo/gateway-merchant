@@ -1,7 +1,7 @@
 export const locale = {
     lang: 'mm',
     data: {
-        'DASHBOARD': {
+        'PRODUCTS': {
             'TITLE': 'Merhaba Dünya!'
         }
     }

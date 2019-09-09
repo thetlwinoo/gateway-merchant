@@ -1,5 +1,5 @@
 export const locale = {
-    lang: 'tr',
+    lang: 'mm',
     data: {
         'NAV': {
             'INVENTORY': 'Programlar',

@@ -34,6 +34,10 @@ const appRoutes: Routes = [
         loadChildren: './main/dashboard/dashboard.module#DashboardModule'
     },
     {
+        path: 'products',
+        loadChildren: './main/products/products.module#ProductsModule'
+    },
+    {
         path: 'pages',
         loadChildren: './main/pages/pages.module#PagesModule'
     },
