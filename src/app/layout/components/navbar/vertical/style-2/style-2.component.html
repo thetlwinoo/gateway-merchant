@@ -1,0 +1,23 @@
+<div class="navbar-header" [ngClass]="rootConfig.layout.navbar.secondaryBackground">
+
+    <div class="logo">
+        <img class="logo-icon" src="assets/images/logos/root.svg">
+        <span class="logo-text">ROOT</span>
+    </div>
+
+    <button mat-icon-button class="toggle-sidebar-folded"
+            (click)="toggleSidebarFolded()" fxHide.lt-lg>
+        <mat-icon>menu</mat-icon>
+    </button>
+
+    <button mat-icon-button class="toggle-sidebar-opened"
+            (click)="toggleSidebarOpened()" fxHide.gt-md>
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+
+</div>
+
+<div class="navbar-content" rootPerfectScrollbar [rootPerfectScrollbarOptions]="{suppressScrollX: true}"
+     [ngClass]="rootConfig.layout.navbar.primaryBackground">
+    <root-navigation layout="vertical"></root-navigation>
+</div>

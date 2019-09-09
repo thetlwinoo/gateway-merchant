@@ -1,0 +1,30 @@
+@import "src/@root/components/countdown/countdown.theme";
+@import "src/@root/components/material-color-picker/material-color-picker.theme";
+@import "src/@root/components/search-bar/search-bar.theme";
+@import "src/@root/components/shortcuts/shortcuts.theme";
+@import "src/@root/components/sidebar/sidebar.theme";
+@import "src/@root/components/theme-options/theme-options.theme";
+@import "src/@root/components/widget/widget.theme";
+
+@mixin root-core-theme($theme) {
+
+    // Theming for Root core styles
+    @include colors-theme($theme);
+    @include cards-theme($theme);
+    @include material-theme($theme);
+    @include page-layouts-theme($theme);
+    @include typography-theme($theme);
+
+    // Theming for Root components
+    @include root-countdown-theme($theme);
+    @include root-search-bar-theme($theme);
+    @include root-shortcuts-theme($theme);
+    @include root-sidebar-theme($theme);
+    @include root-theme-options-theme($theme);
+    @include root-material-color-picker-theme($theme);
+    @include root-widget-theme($theme);
+
+    // Theming for 3rd party components
+    @include ngx-datatable-theme($theme);
+}
+
