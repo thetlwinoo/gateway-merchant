@@ -12,7 +12,8 @@ export class LoginService {
         private authServerProvider: AuthServerProvider
     ) {}
 
-    login(credentials, callback?) {        
+    login(credentials, callback?) {      
+        console.log('credentials',credentials)  
         const cb = callback || function() {};
 
         return new Promise((resolve, reject) => {
