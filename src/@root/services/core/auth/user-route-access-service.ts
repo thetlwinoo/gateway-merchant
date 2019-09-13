@@ -23,7 +23,6 @@ export class UserRouteAccessService implements CanActivate {
     checkLogin(authorities: string[], url: string): Promise<boolean> {
         return this.accountService.identity().then(account => {            
             if (!authorities || authorities.length === 0) {
-                console.log('acuth return')
                 return true;
             }
 
@@ -41,7 +40,6 @@ export class UserRouteAccessService implements CanActivate {
             }
 
             this.stateStorageService.storeUrl(url);
-            console.log('redirect')
             this.router.navigate(['/pages/auth/login']).then(() => {
                 // only show the login dialog, if the user hasn't logged in yet
                 if (!account) {

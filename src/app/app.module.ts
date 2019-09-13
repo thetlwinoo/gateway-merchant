@@ -13,6 +13,15 @@ import { RootModule } from '@root/root.module';
 import { RootSharedModule } from '@root/shared.module';
 import { RootProgressBarModule, RootSidebarModule, RootThemeOptionsModule } from '@root/components';
 
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule, RouterState } from '@ngrx/router-store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ROOT_REDUCERS, metaReducers } from 'app/ngrx';
+import { NgrxCoreModule } from 'app/ngrx/core';
+import { RouterEffects } from 'app/ngrx/core/effects';
+import { AuthModule } from 'app/ngrx/auth';
+
 import { rootConfig } from 'app/root-config';
 
 import { AppComponent } from 'app/app.component';
@@ -82,7 +91,28 @@ const appRoutes: Routes = [
 
         // App modules
         LayoutModule,
-        DashboardModule
+        DashboardModule,
+
+        // NGRX
+        StoreModule.forRoot(ROOT_REDUCERS, {
+            metaReducers,
+            // runtimeChecks: {
+            //   strictStateImmutability: true,
+            //   strictActionImmutability: true,
+            //   strictStateSerializability: true,
+            //   strictActionSerializability: true,
+            // },
+        }),
+        StoreRouterConnectingModule.forRoot({
+            routerState: RouterState.Minimal,
+        }),
+        StoreDevtoolsModule.instrument({
+            name: 'NgRx Merchant App',
+            // In a production build you would want to disable the Store Devtools
+            // logOnly: environment.production,
+        }),
+        EffectsModule.forRoot([RouterEffects]),
+        AuthModule
     ],
     providers: [
         {

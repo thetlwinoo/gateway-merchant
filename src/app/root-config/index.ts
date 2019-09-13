@@ -32,7 +32,7 @@ export const rootConfig: RootConfig = {
         footer   : {
             customBackgroundColor: true,
             background           : 'root-navy-900',
-            hidden               : false,
+            hidden               : true,
             position             : 'below-fixed'
         },
         sidepanel: {

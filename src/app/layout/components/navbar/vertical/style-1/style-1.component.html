@@ -25,10 +25,10 @@
 
     <div class="user" fxLayout="column" [ngClass]="rootConfig.layout.navbar.secondaryBackground">
 
-        <div class="h3 username">{{logonName()}}</div>
+        <div class="h3 username">{{(merchant$ | async)?.merchantName}}</div>
         <div class="h5 email hint-text mt-8">{{account?.email}}</div>
-        <div class="avatar-container" [ngClass]="rootConfig.layout.navbar.primaryBackground">
-            <img class="avatar" src="assets/images/avatars/merchant.png">
+        <div class="avatar-container" [ngClass]="rootConfig.layout.navbar.primaryBackground">           
+            <img class="avatar" [src]="'data:' + (merchant$ | async)?.avatarContentType + ';base64,' + (merchant$ | async)?.avatar" alt="avatar image" draggable="false" />
         </div>
 
     </div>

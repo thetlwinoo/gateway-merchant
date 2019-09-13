@@ -9,7 +9,7 @@ export class LoginService {
     constructor(
         private accountService: AccountService,
         private trackerService: JhiTrackerService,
-        private authServerProvider: AuthServerProvider
+        private authServerProvider: AuthServerProvider        
     ) {}
 
     login(credentials, callback?) {      
@@ -19,7 +19,7 @@ export class LoginService {
         return new Promise((resolve, reject) => {
             this.authServerProvider.login(credentials).subscribe(
                 data => {                         
-                    this.accountService.identity(true).then(account => {                       
+                    this.accountService.identity(true).then(account => {                                     
                         this.trackerService.sendActivity();
                         resolve(data);
                     });

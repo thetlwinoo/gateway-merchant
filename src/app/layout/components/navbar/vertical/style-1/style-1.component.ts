@@ -7,8 +7,15 @@ import { RootConfigService } from '@root/services/config.service';
 import { RootNavigationService } from '@root/components/navigation/navigation.service';
 import { RootPerfectScrollbarDirective } from '@root/directives/root-perfect-scrollbar/root-perfect-scrollbar.directive';
 import { RootSidebarService } from '@root/components/sidebar/sidebar.service';
-import { Account } from '@root/models';
+import { Account, IMerchants } from '@root/models';
 import { AccountService } from '@root/services/core';
+
+import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+
+import { Observable } from "rxjs";
+import { Store, select } from "@ngrx/store";
+import * as fromAuth from 'app/ngrx/auth/reducers';
+import { MerchantActions } from 'app/ngrx/auth/actions';
 
 @Component({
     selector: 'navbar-vertical-style-1',
@@ -20,6 +27,7 @@ export class NavbarVerticalStyle1Component implements OnInit, OnDestroy {
     rootConfig: any;
     navigation: any;
     account: Account;
+    merchant$: Observable<IMerchants>;
     // Private
     private _rootPerfectScrollbar: RootPerfectScrollbarDirective;
     private _unsubscribeAll: Subject<any>;
@@ -38,7 +46,10 @@ export class NavbarVerticalStyle1Component implements OnInit, OnDestroy {
         private _rootSidebarService: RootSidebarService,
         private _router: Router,
         private accountService: AccountService,
+        private store: Store<fromAuth.State>,
+        protected dataUtils: JhiDataUtils,
     ) {
+        this.merchant$ = store.pipe(select(fromAuth.getMerchantFetched)) as Observable<IMerchants>;
         // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
@@ -101,6 +112,7 @@ export class NavbarVerticalStyle1Component implements OnInit, OnDestroy {
             );
         this.accountService.identity().then((account: Account) => {
             this.account = account;
+            this.store.dispatch(MerchantActions.getLoginMerchant());
         });
         // Subscribe to the config changes
         this._rootConfigService.config

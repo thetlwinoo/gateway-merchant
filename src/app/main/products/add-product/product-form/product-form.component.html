@@ -1,0 +1,50 @@
+<form name="productForm" [formGroup]="productForm" class="product w-100-p" fxLayout="column" fxFlex>
+    <mat-form-field appearance="outline" class="w-100-p" hintLabel="Max 255 characters">
+        <mat-label>Product Name</mat-label>
+        <input #productName matInput placeholder="Product Name" name="name" formControlName="name" required>
+        <mat-hint align="end">{{productName.value?.length || 0}}/255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+        <mat-label>Category</mat-label>
+        <textarea matInput placeholder="Category" name="description" formControlName="productCategoryId" rows="5">
+    </textarea>
+    </mat-form-field>
+
+    <!-- <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+
+        <mat-label>Categories</mat-label>
+
+        <mat-chip-list #categoryList name="categories" formControlName="categories">
+
+            <mat-chip *ngFor="let category of product.categories" [removable]="true"
+                (removed)="product.removeCategory(category)">
+                {{category}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+
+            <input [matChipInputFor]="categoryList" [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="product.addCategory($event)" />
+
+        </mat-chip-list>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+
+        <mat-label>Tags</mat-label>
+
+        <mat-chip-list #tagList name="tags" formControlName="tags">
+
+            <mat-chip *ngFor="let tag of product.tags" [removable]="true" (removed)="product.removeTag(tag)">
+                {{tag}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+
+            <input [matChipInputFor]="tagList" [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="product.addTag($event)" />
+
+        </mat-chip-list>
+
+    </mat-form-field> -->
+</form>
