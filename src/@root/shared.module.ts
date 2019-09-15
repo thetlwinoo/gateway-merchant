@@ -7,28 +7,30 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { RootDirectivesModule } from '@root/directives/directives';
 import { RootPipesModule } from '@root/pipes/pipes.module';
 import { ResourceSharedLibsModule, ResourceSharedCommonModule } from './';
+import { RootSnackbarModule } from '@root/components/snackbar/snackbar.module';
 
 @NgModule({
-    imports  : [
+    imports: [
         CommonModule,
-        ResourceSharedLibsModule, 
+        ResourceSharedLibsModule,
         ResourceSharedCommonModule,
 
         FlexLayoutModule,
 
         RootDirectivesModule,
-        RootPipesModule
+        RootPipesModule,
+        RootSnackbarModule
     ],
-    exports  : [
+    exports: [
         CommonModule,
         ResourceSharedLibsModule,
         FlexLayoutModule,
 
         RootDirectivesModule,
-        RootPipesModule
+        RootPipesModule,
+        RootSnackbarModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class RootSharedModule
-{
+export class RootSharedModule {
 }

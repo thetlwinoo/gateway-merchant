@@ -35,6 +35,7 @@ import { AuthInterceptor } from '@root/blocks/interceptor/auth.interceptor';
 import { AuthExpiredInterceptor } from '@root/blocks/interceptor/auth-expired.interceptor';
 import { ErrorHandlerInterceptor } from '@root/blocks/interceptor/errorhandler.interceptor';
 import { NotificationInterceptor } from '@root/blocks/interceptor/notification.interceptor';
+import { NgrxProductsModule } from 'app/ngrx/products';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -112,7 +113,9 @@ const appRoutes: Routes = [
             // logOnly: environment.production,
         }),
         EffectsModule.forRoot([RouterEffects]),
-        AuthModule
+        AuthModule,
+
+        NgrxProductsModule
     ],
     providers: [
         {

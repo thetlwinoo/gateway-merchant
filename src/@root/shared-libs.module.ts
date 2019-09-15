@@ -15,12 +15,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
+import { MatMenuModule } from '@angular/material';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AgmCoreModule } from '@agm/core';
+
+import { MatSelectFilterModule } from 'mat-select-filter';
+
+import { TreeModule } from 'primeng/tree';
 
 @NgModule({
     imports: [
@@ -40,8 +47,15 @@ import { AgmCoreModule } from '@agm/core';
         MatSortModule,
         MatTableModule,
         MatTabsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatDialogModule,
         NgxChartsModule,
-        AgmCoreModule
+        AgmCoreModule,
+
+        MatSelectFilterModule,
+        //primeng modules
+        TreeModule
     ],
     exports: [
         FormsModule,
@@ -64,8 +78,15 @@ import { AgmCoreModule } from '@agm/core';
         MatSortModule,
         MatTableModule,
         MatTabsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatDialogModule,
         NgxChartsModule,
-        AgmCoreModule
+        AgmCoreModule,
+
+        MatSelectFilterModule,
+        //primeng modules
+        TreeModule
     ]
 })
 export class ResourceSharedLibsModule {

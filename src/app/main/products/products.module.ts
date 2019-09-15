@@ -10,6 +10,7 @@ import { ManageImagesComponent } from './manage-images/manage-images.component';
 import { ManageProductsService } from '@root/services';
 import { ManageProductService } from '@root/services';
 import { ProductFormComponent } from './add-product/product-form/product-form.component';
+import { CategoryFormComponent } from './add-product/category-form/category-form.component';
 
 const routes = [
   {
@@ -52,7 +53,8 @@ const routes = [
     ManageProductsComponent,
     AddProductComponent,
     ManageImagesComponent,
-    ProductFormComponent
+    ProductFormComponent,
+    CategoryFormComponent
   ],
   imports: [
     CommonModule,
@@ -68,6 +70,9 @@ const routes = [
   providers: [
     ManageProductsService,
     ManageProductService
+  ],
+  entryComponents: [
+    CategoryFormComponent
   ]
 })
 export class ProductsModule { }

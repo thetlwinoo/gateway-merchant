@@ -1,0 +1,29 @@
+<div class="dialog-content-wrapper" id="category-form-dialog">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">{{dialogTitle}}</span>
+            <button mat-icon-button (click)="matDialogRef.close()" aria-label="Close dialog">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" rootPerfectScrollbar>
+        <p-tree class="category-tree" [value]="categories$ | async" selectionMode="single" [(selection)]="selectedFile"
+            (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" [filter]="true" filterMode="strict"></p-tree>
+    </div>
+
+    <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+
+        <button mat-button class="mr-8" (click)="matDialogRef.close(['cancel',selectedNode])" aria-label="Cancel"
+            matTooltip="Cancel">
+            CANCEL
+        </button>
+
+        <button mat-button class="select-button" (click)="matDialogRef.close(selectedNode)"
+            [disabled]="!selectedNode?.data.parentId" aria-label="Select">
+            SELECT
+        </button>
+
+    </div>
+</div>
