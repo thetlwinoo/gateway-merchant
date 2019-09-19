@@ -1,12 +1,16 @@
 import { FetchActions } from 'app/ngrx/products/actions';
 import { createReducer, on } from '@ngrx/store';
-import { IProductCategory, IProductModel } from '@root/models';
+import { IProductCategory, IProductModel, IProductBrand, IProductChoice, IProductAttribute, IProductOption } from '@root/models';
 
 export const fetchFeatureKey = 'fetch';
 
 export interface State {
     categories: any[];
     models: IProductModel[];
+    brands: IProductBrand[];
+    productChoice: IProductChoice[];
+    productAttributeList: IProductAttribute[];
+    productOptionList: IProductOption[];
     loading: boolean;
     error: string;
 }
@@ -14,6 +18,10 @@ export interface State {
 const initialState: State = {
     categories: [],
     models: [],
+    brands: [],
+    productChoice: [],
+    productAttributeList: [],
+    productOptionList: [],
     loading: false,
     error: ''
 };
@@ -43,11 +51,43 @@ export const reducer = createReducer(
         loading: false,
         error: ''
     })),
+    on(FetchActions.fetchBrandsSuccess, (state, { brands }) => ({
+        ...state,
+        brands: brands,
+        loading: false,
+        error: ''
+    })),
+    on(FetchActions.fetchProductChoiceSuccess, (state, { choice }) => ({
+        ...state,
+        productChoice: choice,
+        loading: false,
+        error: ''
+    })),
+    on(FetchActions.fetchProductAttributeSuccess, (state, { productAttributeList }) => ({
+        ...state,
+        productAttributeList: productAttributeList,
+        loading: false,
+        error: ''
+    })),
+    on(FetchActions.fetchProductOptionSuccess, (state, { productOptionList }) => ({
+        ...state,
+        productOptionList: productOptionList,
+        loading: false,
+        error: ''
+    })),
 )
 
 export const getCategories = (state: State) => state.categories;
 
 export const getModels = (state: State) => state.models;
+
+export const getBrands = (state: State) => state.brands;
+
+export const getProductChoice = (state: State) => state.productChoice;
+
+export const getProductAttributeList = (state: State) => state.productAttributeList;
+
+export const getProductOptionList = (state: State) => state.productOptionList;
 
 export const getLoading = (state: State) => state.loading;
 

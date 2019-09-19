@@ -6,6 +6,7 @@ import {
     Action,
 } from '@ngrx/store';
 import * as fromFetch from 'app/ngrx/products/reducers/fetch.reducer';
+import * as fromCategory from 'app/ngrx/products/reducers/category.reducer';
 import * as fromRoot from 'app/ngrx';
 import { ITEMS_PER_PAGE } from '@root/constants';
 import { TreeNode } from 'primeng/api';
@@ -13,6 +14,7 @@ export const productsFeatureKey = 'products';
 
 export interface ProductsState {
     [fromFetch.fetchFeatureKey]: fromFetch.State;
+    [fromCategory.categoryFeatureKey]: fromCategory.State;
 }
 
 export interface State extends fromRoot.State {
@@ -22,6 +24,7 @@ export interface State extends fromRoot.State {
 export function reducers(state: ProductsState | undefined, action: Action) {
     return combineReducers({
         [fromFetch.fetchFeatureKey]: fromFetch.reducer,
+        [fromCategory.categoryFeatureKey]: fromCategory.reducer,
     })(state, action);
 }
 
@@ -53,10 +56,9 @@ export const getFetchCategories = createSelector(
 export const getFetchCategoriesTree = createSelector(
     getFetchCategories,
     (entities) => {
-
         const treeModel = [];
         entities.map(category => {
-            const _category: TreeNode = {                
+            const _category: TreeNode = {
                 label: category.name,
                 data: category,
                 expandedIcon: "fa fa-folder-open",
@@ -66,7 +68,7 @@ export const getFetchCategoriesTree = createSelector(
             }
 
             category.children.map(subCategory => {
-                const _subCategory = {                    
+                const _subCategory = {
                     label: subCategory.name,
                     data: subCategory,
                     expandedIcon: "fa fa-folder-open",
@@ -87,4 +89,52 @@ export const getFetchModels = createSelector(
     getFetchState,
     fromFetch.getModels
 );
+
+export const getFetchBrands = createSelector(
+    getFetchState,
+    fromFetch.getBrands
+);
+
+export const getFetchProductChoice = createSelector(
+    getFetchState,
+    fromFetch.getProductChoice
+);
+
+export const getFetchProductAttributeList = createSelector(
+    getFetchState,
+    fromFetch.getProductAttributeList
+);
+
+export const getFetchProductOptionList = createSelector(
+    getFetchState,
+    fromFetch.getProductOptionList
+);
+
+//Category State
+export const getCategoryState = createSelector(
+    getProductsState,
+    (state: ProductsState) => state.category
+);
+
+export const getSelectedCategoryId = createSelector(
+    getCategoryState,
+    fromCategory.getSelectedId
+);
+
+export const getSelectedCategory = createSelector(
+    getFetchCategories,
+    getSelectedCategoryId,
+    (entities, selectedId) => findById(entities, selectedId) || null
+);
+
+function findById(data, id) {
+    if (!data || !id) return null;
+    for (const datum of data) {
+        if (datum.id == id) return datum
+        if (datum.children) {
+            let result = findById(datum.children, id)
+            if (result) return result
+        }
+    }
+}
 

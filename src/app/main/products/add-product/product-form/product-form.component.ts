@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { IProducts, IProductCategory, Products, IProductModel } from '@root/models';
+import { IProducts, IProductCategory, Products, IProductModel, IMerchants, IProductBrand } from '@root/models';
 import { ManageProductService } from '@root/services';
 import { RootTranslationLoaderService } from '@root/services/translation-loader.service';
 
@@ -17,7 +17,9 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as fromProducts from 'app/ngrx/products/reducers';
-import { FetchActions } from 'app/ngrx/products/actions';
+import * as fromAuth from 'app/ngrx/auth/reducers';
+import { FetchActions, CategoryActions } from 'app/ngrx/products/actions';
+import { MerchantActions } from 'app/ngrx/auth/actions';
 
 @Component({
   selector: 'product-form',
@@ -27,14 +29,20 @@ import { FetchActions } from 'app/ngrx/products/actions';
   animations: rootAnimations
 })
 export class ProductFormComponent implements OnInit, OnDestroy {
-  product: IProducts;
-  productForm: FormGroup;
+  // product: IProducts;
+  @Input() productForm: FormGroup;
   productcategories: IProductCategory[];
   pageType: string;
   dialogRef: any;
   hasSelectedCategory: boolean;
+
   productModels$: Observable<IProductModel[]>;
   public productModelsFiltered;
+
+  productBrands$: Observable<IProductBrand[]>;
+
+  merchant$: Observable<IMerchants>;
+
   private _unsubscribeAll: Subject<any>;
 
   constructor(
@@ -42,49 +50,27 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     private _ecommerceProductService: ManageProductService,
     private _rootTranslationLoaderService: RootTranslationLoaderService,
     private store: Store<fromProducts.State>,
+    private authStore: Store<fromAuth.State>,
     private _matDialog: MatDialog
   ) {
-    this.product = new Products();
+    // this.product = new Products();
     this.productModels$ = store.pipe(select(fromProducts.getFetchModels)) as Observable<IProductModel[]>;
+    this.productBrands$ = store.pipe(select(fromProducts.getFetchBrands)) as Observable<IProductBrand[]>;
+    this.merchant$ = authStore.pipe(select(fromAuth.getMerchantFetched)) as Observable<IMerchants>;
     this.productModels$.subscribe(models => this.productModelsFiltered = models.slice())
     this._unsubscribeAll = new Subject();
   }
 
   ngOnInit() {
-    this._ecommerceProductService.onProductChanged
+    this.merchant$
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(product => {
-        if (product) {
-          this.product = new Products(product);
-          this.pageType = 'edit';
+      .subscribe(merchant => {
+        if (merchant) {
+          this.store.dispatch(FetchActions.fetchModels({ id: merchant.id }));
+          this.store.dispatch(FetchActions.fetchBrands({ id: merchant.id }));
         }
-        else {
-          this.pageType = 'new';
-          this.product = new Products();
-        }
-
-        this.productForm = this.createProductForm();
       });
-    this.store.dispatch(FetchActions.fetchModels());
     this._rootTranslationLoaderService.loadTranslations(english, myanmar);
-  }
-
-  createProductForm(): FormGroup {
-    return this._formBuilder.group({
-      id: [this.product.id],
-      productName: [this.product.productName],
-      productNumber: [this.product.productNumber],
-      searchDetails: [this.product.searchDetails],
-      sellStartDate: [this.product.sellStartDate],
-      sellEndDate: [this.product.sellEndDate],
-      warrantyPeriod: [this.product.warrantyPeriod],
-      warrantyPolicy: [this.product.warrantyPolicy],
-      whatInTheBox: [this.product.whatInTheBox],
-      productCategoryId: [this.product.productCategoryId],
-      productCategoryName: [this.product.productCategoryName],
-      productModelId: [this.product.productModelId],
-      productModelName: [this.product.productModelProductModelName]
-    });
   }
 
   selectCategory(): void {
@@ -101,9 +87,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
           return;
         }
 
+        this.store.dispatch(CategoryActions.selectCategory({ id: response.data.id }));
         this.productForm.patchValue({
           productCategoryId: response.data.id,
-          productCategoryName: response.label
+          productCategoryName: response.data.parentName + '>>' + response.label
         })
         // this._contactsService.updateContact(response.getRawValue());
       });

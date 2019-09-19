@@ -25,10 +25,11 @@ import { locale as myanmar } from './i18n/mm';
 })
 export class AddProductComponent implements OnInit, OnDestroy {
 
-  product: IProducts;
+  product: Products;
   pageType: string;
   productForm: FormGroup;
-
+  selectedTab: number = 0;
+  description: string;
   // Private
   private _unsubscribeAll: Subject<any>;
 
@@ -72,25 +73,26 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   createProductForm(): FormGroup {
     return this._formBuilder.group({
-      // id: [this.product.id],
-      // name: [this.product.name],
-      // handle: [this.product.handle],
-      // description: [this.product.description],
-      // categories: [this.product.categories],
-      // tags: [this.product.tags],
-      // images: [this.product.images],
-      // priceTaxExcl: [this.product.priceTaxExcl],
-      // priceTaxIncl: [this.product.priceTaxIncl],
-      // taxRate: [this.product.taxRate],
-      // comparedPrice: [this.product.comparedPrice],
-      // quantity: [this.product.quantity],
-      // sku: [this.product.sku],
-      // width: [this.product.width],
-      // height: [this.product.height],
-      // depth: [this.product.depth],
-      // weight: [this.product.weight],
-      // extraShippingFee: [this.product.extraShippingFee],
-      // active: [this.product.active]
+      id: [this.product.id],
+      productName: [this.product.productName],
+      productNumber: [this.product.productNumber],
+      searchDetails: [this.product.searchDetails],
+      warrantyPeriod: [this.product.warrantyPeriod],
+      warrantyPolicy: [this.product.warrantyPolicy],
+      whatInTheBox: [this.product.whatInTheBox],
+      stockItemLists: [this.product.stockItemLists],
+      warrantyTypeId: [this.product.warrantyTypeId],
+      warrantyTypeWarrantyTypeName: [this.product.warrantyTypeWarrantyTypeName],
+      productModelId: [this.product.productModelId],
+      productModelName: [this.product.productModelProductModelName],
+      productBrandId: [this.product.productBrandId],
+      productBrandName: [this.product.productBrandProductBrandName],
+      productCategoryId: [this.product.productCategoryId],
+      productCategoryName: [this.product.productCategoryName],
+      productAttributeList: [this.product.productAttributeList],
+      productOptionList: [this.product.productOptionList],
+      productAttribute: [],
+      productOption: []
     });
   }
 
@@ -127,5 +129,19 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
         this._location.go('apps/e-commerce/products/' + this.product.id);
       });
+  }
+
+  publishProduct(event): void {
+    console.log('product form', this.productForm.getRawValue());
+  }
+
+  addProductAttribute(event) {
+    const attribute = this.productForm.getRawValue().productAttribute;
+    this.product.addAttribute(attribute);
+  }
+
+  addProductOption(event) {
+    const option = this.productForm.getRawValue().productOption;
+    this.product.addOption(option);
   }
 }

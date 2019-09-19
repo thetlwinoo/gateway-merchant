@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IProductCategory } from '@root/models';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -21,6 +21,7 @@ export class CategoryFormComponent implements OnInit {
   action: string;
   category: IProductCategory;
   selectedNode: any;
+  selectedText: string;
   dialogTitle: string;
 
   constructor(
@@ -28,7 +29,7 @@ export class CategoryFormComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private _data: any,
     private _formBuilder: FormBuilder,
     private store: Store<fromProducts.State>,
-    private rootSnackbarService: RootSnackbarService
+    private _matSnackBar: MatSnackBar,
   ) {
     this.action = _data.action;
     this.dialogTitle = 'Select Category';
@@ -43,7 +44,11 @@ export class CategoryFormComponent implements OnInit {
   nodeSelect(event) {
     // this.messageService.add({ severity: 'info', summary: 'Node Selected', detail: event.node.label });
     this.selectedNode = event.node;
-    this.rootSnackbarService.open(event.node.label);
+    this._matSnackBar.open(event.node.label, 'OK', {
+      verticalPosition: 'bottom',
+      duration: 2000
+    });
+    this.selectedText = event.node.data.parentName ? event.node.data.parentName + '>>' + event.node.label : event.node.label;
   }
 
 }

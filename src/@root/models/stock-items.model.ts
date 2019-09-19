@@ -1,4 +1,6 @@
 import { Moment } from 'moment';
+import { RootUtils } from '@root/utils';
+import { IPhotos, Photos } from '@root/models';
 
 export interface IStockItems {
     id?: number;
@@ -35,6 +37,9 @@ export interface IStockItems {
     productOptionValue?: string;
     productOptionId?: number;
     stockItemHoldingId?: number;
+    photoLists?: IPhotos[];
+    guid?: string;
+    handle?: string;
 }
 
 export class StockItems implements IStockItems {
@@ -72,6 +77,26 @@ export class StockItems implements IStockItems {
         public productAttributeId?: number,
         public productOptionValue?: string,
         public productOptionId?: number,
-        public stockItemHoldingId?: number
-    ) {}
+        public stockItemHoldingId?: number,
+        public photoLists?: IPhotos[],
+        public guid?: string,
+        public handle?: string
+    ) {
+        this.guid = RootUtils.generateGUID();
+        this.handle = RootUtils.handleize(this.stockItemName);
+
+        if (photoLists && photoLists.length) {
+            for (var _i = 0; _i < (8 - photoLists.length); _i++) {
+                const IPhotos = new Photos();
+                this.photoLists.push(IPhotos);
+            }
+        } else {
+            this.photoLists = [];
+            for (var _i = 0; _i < 8; _i++) {
+                const IPhotos = new Photos();
+                this.photoLists.push(IPhotos);
+            }
+        }
+
+    }
 }

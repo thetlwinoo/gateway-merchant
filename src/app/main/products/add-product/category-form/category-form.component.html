@@ -6,11 +6,14 @@
                 <mat-icon>close</mat-icon>
             </button>
         </mat-toolbar-row>
+        <mat-toolbar-row class="toolbar-bottom" fxLayout="column" fxLayoutAlign="center center">
+            <div class="selected-name mt-8" *ngIf="selectedText">{{selectedText}}</div>
+        </mat-toolbar-row>
     </mat-toolbar>
 
     <div mat-dialog-content class="p-24 pb-0 m-0" rootPerfectScrollbar>
-        <p-tree class="category-tree" [value]="categories$ | async" selectionMode="single" [(selection)]="selectedFile"
-            (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" [filter]="true" filterMode="strict"></p-tree>
+        <p-tree class="category-tree" [value]="categories$ | async" selectionMode="single"
+            (onNodeSelect)="nodeSelect($event)" [filter]="true" filterMode="strict"></p-tree>
     </div>
 
     <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">

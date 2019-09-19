@@ -11,6 +11,7 @@ import { ManageProductsService } from '@root/services';
 import { ManageProductService } from '@root/services';
 import { ProductFormComponent } from './add-product/product-form/product-form.component';
 import { CategoryFormComponent } from './add-product/category-form/category-form.component';
+import { ProductSkuFormComponent } from './add-product/product-sku-form/product-sku-form.component';
 
 const routes = [
   {
@@ -54,7 +55,8 @@ const routes = [
     AddProductComponent,
     ManageImagesComponent,
     ProductFormComponent,
-    CategoryFormComponent
+    CategoryFormComponent,
+    ProductSkuFormComponent
   ],
   imports: [
     CommonModule,

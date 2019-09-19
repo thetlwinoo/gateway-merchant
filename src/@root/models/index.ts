@@ -5,3 +5,8 @@ export * from './stock-items.model';
 export * from './product-category.model';
 export * from './product-model-description.model';
 export * from './product-model.model';
+export * from './product-brand.model';
+export * from './product-choice.model';
+export * from './product-attribute.model';
+export * from './product-option.model';
+export * from './photos.model';

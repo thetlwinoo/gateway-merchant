@@ -1,4 +1,4 @@
-import { Moment } from 'moment';
+import { IStockItems, StockItems, IProductAttribute, IProductOption } from '@root/models';
 
 export interface IProducts {
     id?: number;
@@ -6,12 +6,11 @@ export interface IProducts {
     productNumber?: string;
     searchDetails?: string;
     thumbnailUrl?: string;
-    sellStartDate?: Moment;
-    sellEndDate?: Moment;
     warrantyPeriod?: string;
     warrantyPolicy?: string;
     sellCount?: number;
     whatInTheBox?: string;
+    stockItemLists?: IStockItems[];
     supplierSupplierName?: string;
     supplierId?: number;
     merchantMerchantName?: string;
@@ -28,6 +27,10 @@ export interface IProducts {
     productBrandId?: number;
     warrantyTypeWarrantyTypeName?: string;
     warrantyTypeId?: number;
+    productAttributeIds?: number[];
+    productOptionIds?: number[];
+    productAttributeList?: IProductAttribute[];
+    productOptionList?: IProductOption[];
 }
 
 export class Products implements IProducts {
@@ -37,12 +40,11 @@ export class Products implements IProducts {
         public productNumber?: string,
         public searchDetails?: string,
         public thumbnailUrl?: string,
-        public sellStartDate?: Moment,
-        public sellEndDate?: Moment,
         public warrantyPeriod?: string,
         public warrantyPolicy?: string,
         public sellCount?: number,
         public whatInTheBox?: string,
+        public stockItemLists?: IStockItems[],
         public supplierSupplierName?: string,
         public supplierId?: number,
         public merchantMerchantName?: string,
@@ -58,6 +60,72 @@ export class Products implements IProducts {
         public productBrandProductBrandName?: string,
         public productBrandId?: number,
         public warrantyTypeWarrantyTypeName?: string,
-        public warrantyTypeId?: number
-    ) {}
+        public warrantyTypeId?: number,
+        public productAttributeIds?: number[],
+        public productOptionIds?: number[],
+        public productAttributeList?: IProductAttribute[],
+        public productOptionList?: IProductOption[]
+    ) {
+        this.productAttributeIds = [...new Set(stockItemLists.map(item => item.productAttributeId))];
+        this.productOptionIds = [...new Set(stockItemLists.map(item => item.productOptionId))];
+        this.productAttributeList = [];
+        this.productOptionList = [];
+    }
+
+    addAttribute(attribute: IProductAttribute): void {
+        const index = this.productAttributeList.indexOf(attribute);
+
+        if (index < 0) {
+            this.productAttributeList.push(attribute);
+            this.generateStockItems();
+        }
+    }
+
+    removeAttribute(attribute): void {
+        const index = this.productAttributeList.indexOf(attribute);
+
+        if (index >= 0) {
+            this.productAttributeList.splice(index, 1);
+            this.generateStockItems();
+        }
+    }
+
+    addOption(option: IProductOption): void {
+        const index = this.productOptionList.indexOf(option);
+        if (index < 0) {
+            this.productOptionList.push(option);
+            this.generateStockItems();
+        }
+    }
+
+    removeOption(option): void {
+        const index = this.productOptionList.indexOf(option);
+
+        if (index >= 0) {
+            this.productOptionList.splice(index, 1);
+            this.generateStockItems();
+        }
+    }
+
+    generateStockItems() {
+        const attributeList: IProductAttribute[] = this.productAttributeList;
+        const optionList: IProductOption[] = this.productOptionList;
+
+        this.stockItemLists = [];
+        attributeList.forEach(attribute => {
+            optionList.forEach(option => {
+                if (attribute && option) {
+
+                    const stockItem = new StockItems();
+                    stockItem.productAttributeId = attribute.id;
+                    stockItem.productAttributeValue = attribute.value;
+                    stockItem.productOptionId = option.id;
+                    stockItem.productOptionValue = option.value;
+
+                    this.stockItemLists.push(stockItem);
+                }
+
+            })
+        });
+    }
 }
