@@ -48,7 +48,7 @@
                 <span>SAVE</span>
             </button>
 
-            <button mat-raised-button class="publish-product-button" (click)="publishProduct($event)">
+            <button mat-raised-button class="publish-product-button" (click)="saveProduct($event)">
                 <span>PUBLISH</span>
             </button>
         </div>
@@ -65,7 +65,7 @@
 
                         <div class="tab-content p-24" fusePerfectScrollbar>
 
-                            <product-form [productForm]="productForm"></product-form>
+                            <product-form [productsForm]="productsForm"></product-form>
                             <!-- <div fxLayout="row" fxLayoutAlign="end none" class="mt-12">
                                 <button mat-raised-button class="next-action-button" color="primary"
                                     [disabled]="productForm.invalid || productForm.pristine" (click)="selectedTab = 1">
@@ -80,7 +80,7 @@
                     <mat-tab label="SKU Info">
 
                         <div class="tab-content p-24" fusePerfectScrollbar>
-                            <product-sku-form [productForm]="productForm" [product]="product" (addAttribute)="addProductAttribute($event)" (addOption)="addProductOption($event)"></product-sku-form>
+                            <product-sku-form [productsForm]="productsForm" [product]="product"></product-sku-form>
                             <!-- <div fxLayout="row" fxLayoutAlign="end none" class="mt-12">
                                 <button mat-raised-button class="next-action-button" color="primary"
                                     [disabled]="productForm.invalid || productForm.pristine" (click)="selectedTab = 2">

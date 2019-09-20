@@ -1,4 +1,6 @@
 import { IStockItems, StockItems, IProductAttribute, IProductOption } from '@root/models';
+import * as _ from 'lodash';
+import { RootUtils } from '@root/utils';
 
 export interface IProducts {
     id?: number;
@@ -66,8 +68,9 @@ export class Products implements IProducts {
         public productAttributeList?: IProductAttribute[],
         public productOptionList?: IProductOption[]
     ) {
-        this.productAttributeIds = [...new Set(stockItemLists.map(item => item.productAttributeId))];
-        this.productOptionIds = [...new Set(stockItemLists.map(item => item.productOptionId))];
+        this.stockItemLists = stockItemLists ? stockItemLists : [];
+        this.productAttributeIds = stockItemLists ? [...new Set(stockItemLists.map(item => item.productAttributeId))] : [];
+        this.productOptionIds = stockItemLists ? [...new Set(stockItemLists.map(item => item.productOptionId))] : [];
         this.productAttributeList = [];
         this.productOptionList = [];
     }
@@ -77,7 +80,7 @@ export class Products implements IProducts {
 
         if (index < 0) {
             this.productAttributeList.push(attribute);
-            this.generateStockItems();
+            this.addSync();
         }
     }
 
@@ -86,7 +89,7 @@ export class Products implements IProducts {
 
         if (index >= 0) {
             this.productAttributeList.splice(index, 1);
-            this.generateStockItems();
+            this.stockItemLists = this.stockItemLists.filter(x => x.productAttributeId !== attribute.id);
         }
     }
 
@@ -94,7 +97,7 @@ export class Products implements IProducts {
         const index = this.productOptionList.indexOf(option);
         if (index < 0) {
             this.productOptionList.push(option);
-            this.generateStockItems();
+            this.addSync();
         }
     }
 
@@ -103,29 +106,33 @@ export class Products implements IProducts {
 
         if (index >= 0) {
             this.productOptionList.splice(index, 1);
-            this.generateStockItems();
+            this.stockItemLists = this.stockItemLists.filter(x => x.productOptionId !== option.id);
         }
     }
 
-    generateStockItems() {
-        const attributeList: IProductAttribute[] = this.productAttributeList;
-        const optionList: IProductOption[] = this.productOptionList;
-
-        this.stockItemLists = [];
-        attributeList.forEach(attribute => {
-            optionList.forEach(option => {
+    addSync() {
+        this.productAttributeList.forEach(attribute => {
+            this.productOptionList.forEach(option => {
                 if (attribute && option) {
-
                     const stockItem = new StockItems();
                     stockItem.productAttributeId = attribute.id;
                     stockItem.productAttributeValue = attribute.value;
                     stockItem.productOptionId = option.id;
                     stockItem.productOptionValue = option.value;
+                    stockItem.stockItemName = "test";
 
-                    this.stockItemLists.push(stockItem);
+                    const item = this.stockItemLists ? this.stockItemLists.find(x => x.productAttributeId == attribute.id && x.productOptionId == option.id) : null;
+
+                    if (!item) {
+                        this.stockItemLists.push(stockItem);
+                    }
                 }
 
             })
         });
+
+        // this.stockItemLists = [...tempList, this.stockItemLists].filter(x => !_.isArray(x) && RootUtils.notEmpty(x));
     }
+
+
 }

@@ -1,6 +1,6 @@
 import { FetchActions } from 'app/ngrx/products/actions';
 import { createReducer, on } from '@ngrx/store';
-import { IProductCategory, IProductModel, IProductBrand, IProductChoice, IProductAttribute, IProductOption } from '@root/models';
+import { IProductCategory, IProductModel, IProductBrand, IProductChoice, IProductAttribute, IProductOption, IWarrantyTypes } from '@root/models';
 
 export const fetchFeatureKey = 'fetch';
 
@@ -11,6 +11,7 @@ export interface State {
     productChoice: IProductChoice[];
     productAttributeList: IProductAttribute[];
     productOptionList: IProductOption[];
+    warrantyTypes: IWarrantyTypes[];
     loading: boolean;
     error: string;
 }
@@ -22,6 +23,7 @@ const initialState: State = {
     productChoice: [],
     productAttributeList: [],
     productOptionList: [],
+    warrantyTypes:[],
     loading: false,
     error: ''
 };
@@ -75,6 +77,12 @@ export const reducer = createReducer(
         loading: false,
         error: ''
     })),
+    on(FetchActions.fetchWarrantyTypeSuccess, (state, { warrantyTypes }) => ({
+        ...state,
+        warrantyTypes: warrantyTypes,
+        loading: false,
+        error: ''
+    })),
 )
 
 export const getCategories = (state: State) => state.categories;
@@ -88,6 +96,8 @@ export const getProductChoice = (state: State) => state.productChoice;
 export const getProductAttributeList = (state: State) => state.productAttributeList;
 
 export const getProductOptionList = (state: State) => state.productOptionList;
+
+export const getWarrantyTypes = (state: State) => state.warrantyTypes;
 
 export const getLoading = (state: State) => state.loading;
 

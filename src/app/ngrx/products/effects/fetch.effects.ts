@@ -3,9 +3,9 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { asyncScheduler, EMPTY as empty, of } from 'rxjs';
 import { catchError, debounceTime, map, skip, switchMap, takeUntil, filter, mergeMap, tap } from 'rxjs/operators';
-import { IProductCategory, IProductModel, IProductBrand, IProductChoice, IProductAttribute, IProductOption } from '@root/models';
+import { IProductCategory, IProductModel, IProductBrand, IProductChoice, IProductAttribute, IProductOption, IWarrantyTypes } from '@root/models';
 import { FetchActions } from '../actions';
-import { ProductCategoryService, ProductModelService, ProductBrandService, ProductChoiceService, ProductAttributeService, ProductOptionService } from '@root/services';
+import { ProductCategoryService, ProductModelService, ProductBrandService, ProductChoiceService, ProductAttributeService, ProductOptionService, WarrantyTypesService } from '@root/services';
 import { select, Store } from '@ngrx/store';
 import * as fromProducts from 'app/ngrx/products/reducers';
 
@@ -75,7 +75,7 @@ export class FetchEffects {
                 }).pipe(
                     filter((res: HttpResponse<IProductChoice[]>) => res.ok),
                     switchMap((res: HttpResponse<IProductChoice[]>) =>
-                        [                            
+                        [
                             FetchActions.fetchProductAttribute({ id: res.body[0].productAttributeSetId }),
                             FetchActions.fetchProductOption({ id: res.body[0].productOptionSetId }),
                             FetchActions.fetchProductChoiceSuccess({ choice: res.body }),
@@ -127,6 +127,23 @@ export class FetchEffects {
         )
     );
 
+    fetchWarrantyTypes$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(FetchActions.fetchWarrantyType),
+            switchMap(() =>
+                this.warrantyTypesService.query().pipe(
+                    filter((res: HttpResponse<IWarrantyTypes[]>) => res.ok),
+                    map((res: HttpResponse<IWarrantyTypes[]>) =>
+                        FetchActions.fetchWarrantyTypeSuccess({ warrantyTypes: res.body })
+                    ),
+                    catchError(err =>
+                        of(FetchActions.fetchFailure({ errorMsg: err.message }))
+                    )
+                )
+            )
+        )
+    );
+
     constructor(
         private actions$: Actions,
         private store: Store<fromProducts.State>,
@@ -135,6 +152,7 @@ export class FetchEffects {
         private productBrandService: ProductBrandService,
         private productChoiceService: ProductChoiceService,
         private productAttributeService: ProductAttributeService,
-        private productOptionService: ProductOptionService
+        private productOptionService: ProductOptionService,
+        private warrantyTypesService: WarrantyTypesService
     ) { }
 }

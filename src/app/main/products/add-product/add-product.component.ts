@@ -3,18 +3,25 @@ import { RootTranslationLoaderService } from '@root/services/translation-loader.
 
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 import { rootAnimations } from '@root/animations';
 import { RootUtils } from '@root/utils';
 
-import { IProducts, Products } from '@root/models';
+import { IProducts, Products, IMerchants } from '@root/models';
 import { ManageProductService } from '@root/services';
 
 import { locale as english } from './i18n/en';
 import { locale as myanmar } from './i18n/mm';
+
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+import * as fromProducts from 'app/ngrx/products/reducers';
+import * as fromAuth from 'app/ngrx/auth/reducers';
+import { ProductActions } from 'app/ngrx/products/actions';
+import { MerchantActions } from 'app/ngrx/auth/actions';
 
 @Component({
   selector: 'add-product',
@@ -24,98 +31,122 @@ import { locale as myanmar } from './i18n/mm';
   animations: rootAnimations
 })
 export class AddProductComponent implements OnInit, OnDestroy {
-
-  product: Products;
+  actionsSubscription: Subscription;
+  products: IProducts;
+  isSaving: boolean;
   pageType: string;
-  productForm: FormGroup;
+  productsForm: FormGroup;
   selectedTab: number = 0;
   description: string;
+  merchant$: Observable<IMerchants>;
+  merchant: IMerchants;
   // Private
   private _unsubscribeAll: Subject<any>;
 
   constructor(
     private _ecommerceProductService: ManageProductService,
+    private store: Store<fromProducts.State>,
+    private storeAuth: Store<fromAuth.State>,
+    route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _location: Location,
     private _matSnackBar: MatSnackBar,
-    private _rootTranslationLoaderService: RootTranslationLoaderService
+    private _rootTranslationLoaderService: RootTranslationLoaderService,
+    protected activatedRoute: ActivatedRoute
   ) {
-    this.product = new Products();
+    // this.products = new Products();
     this._unsubscribeAll = new Subject();
+    this.merchant$ = storeAuth.pipe(select(fromAuth.getMerchantFetched)) as Observable<IMerchants>;
+    this.merchant$.pipe(takeUntil(this._unsubscribeAll)).subscribe(merchant => this.merchant = merchant);
+
+    this.actionsSubscription = route.params
+      .pipe(map(params => ProductActions.selectProduct({ id: params.id })))
+      .subscribe(action => store.dispatch(action));
   }
 
   ngOnInit() {
-
-    this._ecommerceProductService.onProductChanged
+    this.isSaving = false;
+    this.activatedRoute.data
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(product => {
-
-        if (product) {
-          this.product = new Products(product);
-          this.pageType = 'edit';
-        }
-        else {
-          this.pageType = 'new';
-          this.product = new Products();
-        }
-
-        this.productForm = this.createProductForm();
+      .subscribe(({ products }) => {
+        this.products = products;
+        this.productsForm = this.createProductForm();
       });
+    // this._ecommerceProductService.onProductChanged
+    //   .pipe(takeUntil(this._unsubscribeAll))
+    //   .subscribe(product => {
+
+    //     if (product) {
+    //       this.products = new Products(product);
+    //       this.pageType = 'edit';
+    //     }
+    //     else {
+    //       this.pageType = 'new';
+    //       this.products = new Products();
+    //     }
+
+    //     this.productsForm = this.createProductForm();
+    //   });
 
     this._rootTranslationLoaderService.loadTranslations(english, myanmar);
   }
 
-  ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
-    this._unsubscribeAll.next();
-    this._unsubscribeAll.complete();
-  }
-
   createProductForm(): FormGroup {
     return this._formBuilder.group({
-      id: [this.product.id],
-      productName: [this.product.productName],
-      productNumber: [this.product.productNumber],
-      searchDetails: [this.product.searchDetails],
-      warrantyPeriod: [this.product.warrantyPeriod],
-      warrantyPolicy: [this.product.warrantyPolicy],
-      whatInTheBox: [this.product.whatInTheBox],
-      stockItemLists: [this.product.stockItemLists],
-      warrantyTypeId: [this.product.warrantyTypeId],
-      warrantyTypeWarrantyTypeName: [this.product.warrantyTypeWarrantyTypeName],
-      productModelId: [this.product.productModelId],
-      productModelName: [this.product.productModelProductModelName],
-      productBrandId: [this.product.productBrandId],
-      productBrandName: [this.product.productBrandProductBrandName],
-      productCategoryId: [this.product.productCategoryId],
-      productCategoryName: [this.product.productCategoryName],
-      productAttributeList: [this.product.productAttributeList],
-      productOptionList: [this.product.productOptionList],
+      id: [this.products.id],
+      merchantId: [this.products.merchantId],
+      productName: [this.products.productName],
+      productNumber: [this.products.productNumber],
+      searchDetails: [this.products.searchDetails],
+      warrantyPeriod: [this.products.warrantyPeriod],
+      warrantyPolicy: [this.products.warrantyPolicy],
+      whatInTheBox: [this.products.whatInTheBox],
+      stockItemLists: [this.products.stockItemLists],
+      warrantyTypeId: [this.products.warrantyTypeId],
+      warrantyTypeWarrantyTypeName: [this.products.warrantyTypeWarrantyTypeName],
+      productModelId: [this.products.productModelId],
+      productModelName: [this.products.productModelProductModelName],
+      productBrandId: [this.products.productBrandId],
+      productBrandName: [this.products.productBrandProductBrandName],
+      productCategoryId: [this.products.productCategoryId],
+      productCategoryName: [this.products.productCategoryName],
+      productAttributeList: [this.products.productAttributeList],
+      productOptionList: [this.products.productOptionList],
       productAttribute: [],
       productOption: []
     });
   }
 
   saveProduct(): void {
-    const data = this.productForm.getRawValue();
-    data.handle = RootUtils.handleize(data.name);
+    const data = this.productsForm.getRawValue();
+    data.stockItemLists = this.products.stockItemLists;
+    data.searchDetails = data.productName ? data.productName : '';
+    data.merchantId = this.merchant ? this.merchant.id : null;
+    data.handle = data.productName ? RootUtils.handleize(data.productName) : null;
+    data.productNumber = data.handle;
 
-    this._ecommerceProductService.saveProduct(data)
-      .then(() => {
+    this.store.dispatch(ProductActions.saveProduct({ product: data }));
+    data.stockItemLists.map(stockItem => {
+      stockItem.photoLists.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
+        this.store.dispatch(ProductActions.saveStockItemPhoto({ photo: photo }));
+      })
+    });
 
-        // Trigger the subscription with new data
-        this._ecommerceProductService.onProductChanged.next(data);
+    // this._ecommerceProductService.saveProduct(data)
+    //   .then(() => {
 
-        // Show the success message
-        this._matSnackBar.open('Product saved', 'OK', {
-          verticalPosition: 'top',
-          duration: 2000
-        });
-      });
+    //     // Trigger the subscription with new data
+    //     this._ecommerceProductService.onProductChanged.next(data);
+
+    // Show the success message
+    this._matSnackBar.open('Product saved', 'OK', {
+      verticalPosition: 'top',
+      duration: 2000
+    });
   }
 
   addProduct(): void {
-    const data = this.productForm.getRawValue();
+    const data = this.productsForm.getRawValue();
     data.handle = RootUtils.handleize(data.name);
 
     this._ecommerceProductService.addProduct(data)
@@ -127,21 +158,15 @@ export class AddProductComponent implements OnInit, OnDestroy {
           duration: 2000
         });
 
-        this._location.go('apps/e-commerce/products/' + this.product.id);
+        this._location.go('apps/e-commerce/products/' + this.products.id);
       });
   }
 
-  publishProduct(event): void {
-    console.log('product form', this.productForm.getRawValue());
-  }
 
-  addProductAttribute(event) {
-    const attribute = this.productForm.getRawValue().productAttribute;
-    this.product.addAttribute(attribute);
-  }
-
-  addProductOption(event) {
-    const option = this.productForm.getRawValue().productOption;
-    this.product.addOption(option);
+  ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+    this.actionsSubscription.unsubscribe();
   }
 }

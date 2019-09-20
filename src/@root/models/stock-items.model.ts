@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import { RootUtils } from '@root/utils';
-import { IPhotos, Photos } from '@root/models';
+import { IPhotos, Photos, ISpecialDeals } from '@root/models';
 
 export interface IStockItems {
     id?: number;
@@ -17,13 +17,14 @@ export interface IStockItems {
     typicalHeightPerUnit?: number;
     marketingComments?: string;
     internalComments?: string;
-    discontinuedDate?: Moment;
+    sellStartDate?: Moment;
+    sellEndDate?: Moment;
     sellCount?: number;
     customFields?: string;
     thumbnailUrl?: string;
-    reviewLineId?: number;
-    productProductName?: string;
-    productId?: number;
+    stockItemOnReviewLineId?: number;
+    photoLists?: IPhotos[];
+    specialDiscounts?: ISpecialDeals[];
     lengthUnitMeasureCodeUnitMeasureCode?: string;
     lengthUnitMeasureCodeId?: number;
     weightUnitMeasureCodeUnitMeasureCode?: string;
@@ -37,7 +38,7 @@ export interface IStockItems {
     productOptionValue?: string;
     productOptionId?: number;
     stockItemHoldingId?: number;
-    photoLists?: IPhotos[];
+    productId?: number;
     guid?: string;
     handle?: string;
 }
@@ -58,13 +59,14 @@ export class StockItems implements IStockItems {
         public typicalHeightPerUnit?: number,
         public marketingComments?: string,
         public internalComments?: string,
-        public discontinuedDate?: Moment,
+        public sellStartDate?: Moment,
+        public sellEndDate?: Moment,
         public sellCount?: number,
         public customFields?: string,
         public thumbnailUrl?: string,
-        public reviewLineId?: number,
-        public productProductName?: string,
-        public productId?: number,
+        public stockItemOnReviewLineId?: number,
+        public photoLists?: IPhotos[],
+        public specialDiscounts?: ISpecialDeals[],
         public lengthUnitMeasureCodeUnitMeasureCode?: string,
         public lengthUnitMeasureCodeId?: number,
         public weightUnitMeasureCodeUnitMeasureCode?: string,
@@ -78,12 +80,12 @@ export class StockItems implements IStockItems {
         public productOptionValue?: string,
         public productOptionId?: number,
         public stockItemHoldingId?: number,
-        public photoLists?: IPhotos[],
+        public productId?: number,
         public guid?: string,
         public handle?: string
     ) {
         this.guid = RootUtils.generateGUID();
-        this.handle = RootUtils.handleize(this.stockItemName);
+        this.handle = this.stockItemName ? RootUtils.handleize(this.stockItemName) : null;
 
         if (photoLists && photoLists.length) {
             for (var _i = 0; _i < (8 - photoLists.length); _i++) {

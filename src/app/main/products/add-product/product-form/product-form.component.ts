@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { IProducts, IProductCategory, Products, IProductModel, IMerchants, IProductBrand } from '@root/models';
+import { IProducts, IProductCategory, Products, IProductModel, IMerchants, IProductBrand, IWarrantyTypes } from '@root/models';
 import { ManageProductService } from '@root/services';
 import { RootTranslationLoaderService } from '@root/services/translation-loader.service';
 
@@ -30,7 +30,7 @@ import { MerchantActions } from 'app/ngrx/auth/actions';
 })
 export class ProductFormComponent implements OnInit, OnDestroy {
   // product: IProducts;
-  @Input() productForm: FormGroup;
+  @Input() productsForm: FormGroup;
   productcategories: IProductCategory[];
   pageType: string;
   dialogRef: any;
@@ -40,6 +40,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   public productModelsFiltered;
 
   productBrands$: Observable<IProductBrand[]>;
+  warrantyTypes$: Observable<IWarrantyTypes[]>;
 
   merchant$: Observable<IMerchants>;
 
@@ -56,6 +57,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     // this.product = new Products();
     this.productModels$ = store.pipe(select(fromProducts.getFetchModels)) as Observable<IProductModel[]>;
     this.productBrands$ = store.pipe(select(fromProducts.getFetchBrands)) as Observable<IProductBrand[]>;
+    this.warrantyTypes$ = store.pipe(select(fromProducts.getFetchWarrantyTypes)) as Observable<IWarrantyTypes[]>;
     this.merchant$ = authStore.pipe(select(fromAuth.getMerchantFetched)) as Observable<IMerchants>;
     this.productModels$.subscribe(models => this.productModelsFiltered = models.slice())
     this._unsubscribeAll = new Subject();
@@ -68,6 +70,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         if (merchant) {
           this.store.dispatch(FetchActions.fetchModels({ id: merchant.id }));
           this.store.dispatch(FetchActions.fetchBrands({ id: merchant.id }));
+          this.store.dispatch(FetchActions.fetchWarrantyType());
         }
       });
     this._rootTranslationLoaderService.loadTranslations(english, myanmar);
@@ -88,7 +91,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         }
 
         this.store.dispatch(CategoryActions.selectCategory({ id: response.data.id }));
-        this.productForm.patchValue({
+        this.productsForm.patchValue({
           productCategoryId: response.data.id,
           productCategoryName: response.data.parentName + '>>' + response.label
         })

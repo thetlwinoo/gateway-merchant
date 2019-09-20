@@ -1,4 +1,4 @@
-<form name="productForm" [formGroup]="productForm" class="product w-100-p" fxLayout="column" fxFlex>
+<form name="productsForm" [formGroup]="productsForm" class="product w-100-p" fxLayout="column" fxFlex>
     <mat-form-field class="w-100-p" hintLabel="Max 255 characters">
         <mat-label>Product Name</mat-label>
         <input #productName matInput placeholder="Product Name" name="name" formControlName="productName" required>
@@ -22,7 +22,7 @@
 
     <mat-form-field class="w-100-p">
         <mat-label>Brand</mat-label>
-        <mat-select formControlName="productBrandName" #brandSelect>
+        <mat-select formControlName="productBrandId" #brandSelect>
             <mat-option value="" selected>No Brand</mat-option>
             <mat-option *ngFor="let brand of (productBrands$ | async)" [value]="brand.id">
                 {{brand.productBrandName}}
@@ -32,12 +32,21 @@
 
     <mat-form-field class="w-100-p">
         <mat-label>Model</mat-label>
-        <mat-select formControlName="productModelName" #modelSelect>
+        <mat-select formControlName="productModelId" #modelSelect>
             <mat-select-filter *ngIf="modelSelect.focused" [array]="productModels$ | async"
                 [displayMember]="'productModelName'" (filteredReturn)="productModelsFiltered = $event">
             </mat-select-filter>
-            <mat-option *ngFor="let model of productModelsFiltered" [value]="model.productModelName">
+            <mat-option *ngFor="let model of productModelsFiltered" [value]="model.id">
                 {{model.productModelName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100-p">
+        <mat-label>Warranty Types</mat-label>
+        <mat-select formControlName="warrantyTypeId" #warrantyTypeSelect>            
+            <mat-option *ngFor="let warrantyType of (warrantyTypes$ | async)" [value]="warrantyType.id">
+                {{warrantyType.warrantyTypeName}}
             </mat-option>
         </mat-select>
     </mat-form-field>

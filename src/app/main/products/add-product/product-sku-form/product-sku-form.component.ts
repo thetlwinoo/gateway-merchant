@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input, OnDestroy, ElementRef, Output } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input, OnDestroy, ElementRef, Output, EventEmitter } from '@angular/core';
 import { rootAnimations } from '@root/animations';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IProductCategory, IProductChoice, IProductAttribute, IProductOption, IStockItems, StockItems, IProducts, Products } from '@root/models';
@@ -10,7 +10,6 @@ import * as fromProducts from 'app/ngrx/products/reducers';
 import { FetchActions, CategoryActions } from 'app/ngrx/products/actions';
 // import { ProductSku } from './product-sku.model';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { EventEmitter } from 'protractor';
 
 const NO_OF_SELECTOR = 8;
 
@@ -22,10 +21,10 @@ const NO_OF_SELECTOR = 8;
   animations: rootAnimations
 })
 export class ProductSkuFormComponent implements OnInit, OnDestroy {
-  @Input() productForm: FormGroup;
+  @Input() productsForm: FormGroup;
   @Input() product: Products;
-  @Output() addAttribute = new EventEmitter();
-  @Output() addOption = new EventEmitter();
+  // @Output() addAttribute = new EventEmitter();
+  // @Output() addOption = new EventEmitter();
 
   category$: Observable<IProductCategory>;
   productChoice$: Observable<IProductChoice[]>;
@@ -116,6 +115,16 @@ export class ProductSkuFormComponent implements OnInit, OnDestroy {
 
   clearInputImage(event, field: string, fieldContentType: string, idInput: string) {
     this.dataUtils.clearInputImage(event, this.elementRef, field, fieldContentType, idInput);
+  }
+
+  addAttribute(event) {
+    const attribute = this.productsForm.getRawValue().productAttribute;
+    this.product.addAttribute(attribute);
+  }
+
+  addOption(event) {
+    const option = this.productsForm.getRawValue().productOption;
+    this.product.addOption(option);
   }
 
   ngOnDestroy(): void {
