@@ -56,42 +56,42 @@
                 </ng-container> -->
 
                 <!-- Image Column -->
-                <ng-container matColumnDef="photo">
+                <ng-container matColumnDef="thumbnailUrl">
                     <mat-header-cell *matHeaderCellDef></mat-header-cell>
                     <mat-cell *matCellDef="let product">
                         <img class="product-image"
-                             *ngIf="product.photo" [alt]="product.name"
-                             [src]="product.photo"/>
-                        <img *ngIf="!product.photo"
+                             *ngIf="product.thumbnailUrl" [alt]="product.productName"
+                             [src]="product.thumbnailUrl"/>
+                        <img *ngIf="!product.thumbnailUrl"
                              [src]="'assets/images/ecommerce/product-image-placeholder.png'">
                     </mat-cell>
                 </ng-container>
 
                 <!-- Name Column -->
-                <ng-container matColumnDef="productName">
+                <ng-container matColumnDef="stockItemName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
                     <mat-cell *matCellDef="let product">
-                        <p class="text-truncate">{{product.productName}}</p>
+                        <p class="text-truncate">{{product.stockItemName}}</p>
                     </mat-cell>
-                </ng-container>
+                </ng-container>                
 
                 <!-- Category Column -->
-                <ng-container matColumnDef="productNumber">
-                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Product Number
-                    </mat-header-cell>
+                <ng-container matColumnDef="productAttributeValue">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Color</mat-header-cell>
                     <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
                         <p class="category text-truncate">
-                            {{product.productNumber}}
+                            {{product.productAttributeValue}}
                         </p>
                     </mat-cell>
                 </ng-container>
 
                 <!-- Category Column -->
-                <ng-container matColumnDef="color">
-                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Color</mat-header-cell>
+                <ng-container matColumnDef="productOptionValue">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Bedding Size
+                    </mat-header-cell>
                     <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
                         <p class="category text-truncate">
-                            {{product.color}}
+                            {{product.productOptionValue}}
                         </p>
                     </mat-cell>
                 </ng-container>

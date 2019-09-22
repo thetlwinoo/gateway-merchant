@@ -119,7 +119,6 @@ export class Products implements IProducts {
                     stockItem.productAttributeValue = attribute.value;
                     stockItem.productOptionId = option.id;
                     stockItem.productOptionValue = option.value;
-                    stockItem.stockItemName = "test";
 
                     const item = this.stockItemLists ? this.stockItemLists.find(x => x.productAttributeId == attribute.id && x.productOptionId == option.id) : null;
 

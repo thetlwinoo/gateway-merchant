@@ -18,14 +18,14 @@
                 </button>
 
                 <div class="product-image mr-8 mr-sm-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
-                    <img *ngIf="product.thumbnailUrl" [src]="product.thumbnailUrl">
-                    <img *ngIf="!product.thumbnailUrl" [src]="'assets/images/ecommerce/product-image-placeholder.png'">
+                    <img *ngIf="products.thumbnailUrl" [src]="products.thumbnailUrl">
+                    <img *ngIf="!products.thumbnailUrl" [src]="'assets/images/ecommerce/product-image-placeholder.png'">
                 </div>
 
                 <div fxLayout="column" fxLayoutAlign="start start"
                     [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
                     <div class="h2" *ngIf="pageType ==='edit'">
-                        {{product.name}}
+                        {{products.productName}}
                     </div>
                     <div class="h2" *ngIf="pageType ==='new'">
                         New Product
@@ -48,7 +48,7 @@
                 <span>SAVE</span>
             </button>
 
-            <button mat-raised-button class="publish-product-button" (click)="saveProduct($event)">
+            <button mat-raised-button class="publish-product-button" (click)="saveProduct()">
                 <span>PUBLISH</span>
             </button>
         </div>
@@ -80,7 +80,7 @@
                     <mat-tab label="SKU Info">
 
                         <div class="tab-content p-24" fusePerfectScrollbar>
-                            <product-sku-form [productsForm]="productsForm" [product]="product"></product-sku-form>
+                            <product-sku-form [productsForm]="productsForm" [products]="products"></product-sku-form>
                             <!-- <div fxLayout="row" fxLayoutAlign="end none" class="mt-12">
                                 <button mat-raised-button class="next-action-button" color="primary"
                                     [disabled]="productForm.invalid || productForm.pristine" (click)="selectedTab = 2">
@@ -88,13 +88,13 @@
                                 </button>
                             </div> -->
                             <!-- <div fxLayout="row wrap" fxLayoutAlign="start start">
-                                <div *ngIf="product.images.length === 0" class="product-image" fxlayout="row"
+                                <div *ngIf="products.images.length === 0" class="product-image" fxlayout="row"
                                     fxLayoutAlign="center center">
                                     <img class="media" [src]="'assets/images/ecommerce/product-image-placeholder.png'">
                                 </div>
 
-                                <div *ngFor="let image of product.images">
-                                    <div *ngIf="product.images.length > 0" class="product-image" fxlayout="row"
+                                <div *ngFor="let image of products.images">
+                                    <div *ngIf="products.images.length > 0" class="product-image" fxlayout="row"
                                         fxLayoutAlign="center center">
                                         <img class="media" [src]="image.url">
                                     </div>

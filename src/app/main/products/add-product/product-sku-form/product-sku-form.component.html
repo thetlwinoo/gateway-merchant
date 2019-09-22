@@ -19,8 +19,8 @@
             <!-- productSku.addAttribute(productAttribute) -->
         </div>
         <mat-chip-list #attributeList name="attributeList" formControlName="productAttributeList">
-            <mat-chip *ngFor="let attribute of product.productAttributeList" [removable]="true"
-                (removed)="product.removeAttribute(attribute)">
+            <mat-chip *ngFor="let attribute of products.productAttributeList" [removable]="true"
+                (removed)="products.removeAttribute(attribute)">
                 {{attribute.value}}
                 <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
@@ -48,8 +48,8 @@
         </div>
         <mat-chip-list #optionList name="optionList" formControlName="productOptionList">
 
-            <mat-chip *ngFor="let productOption of product.productOptionList" [removable]="true"
-                (removed)="product.removeOption(productOption)">
+            <mat-chip *ngFor="let productOption of products.productOptionList" [removable]="true"
+                (removed)="products.removeOption(productOption)">
                 {{productOption.value}}
                 <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
@@ -60,7 +60,7 @@
     </div>
 </form>
 
-<p-table [columns]="stockItemsColumns" [value]="product.stockItemLists" dataKey="guid" [responsive]="true">
+<p-table [columns]="stockItemsColumns" [value]="products.stockItemLists" dataKey="guid" [responsive]="true">
     <ng-template pTemplate="caption">
         Stock Item Product
     </ng-template>

@@ -22,7 +22,7 @@ const NO_OF_SELECTOR = 8;
 })
 export class ProductSkuFormComponent implements OnInit, OnDestroy {
   @Input() productsForm: FormGroup;
-  @Input() product: Products;
+  @Input() products: Products;
   // @Output() addAttribute = new EventEmitter();
   // @Output() addOption = new EventEmitter();
 
@@ -119,12 +119,12 @@ export class ProductSkuFormComponent implements OnInit, OnDestroy {
 
   addAttribute(event) {
     const attribute = this.productsForm.getRawValue().productAttribute;
-    this.product.addAttribute(attribute);
+    this.products.addAttribute(attribute);
   }
 
   addOption(event) {
     const option = this.productsForm.getRawValue().productOption;
-    this.product.addOption(option);
+    this.products.addOption(option);
   }
 
   ngOnDestroy(): void {

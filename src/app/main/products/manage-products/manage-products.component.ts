@@ -26,7 +26,7 @@ import { ManageProductsService } from '@root/services';
 export class ManageProductsComponent implements OnInit {
 
   dataSource: FilesDataSource | null;
-  displayedColumns = ['photo', 'productName', 'productNumber', 'color', 'unitPrice', 'recommendedRetailPrice', 'createdDate'];
+  displayedColumns = ['thumbnailUrl', 'stockItemName', 'productAttributeValue','productOptionValue', 'unitPrice', 'recommendedRetailPrice', 'createdDate'];
 
   @ViewChild(MatPaginator, { static: true })
   paginator: MatPaginator;

@@ -32,6 +32,11 @@ export const searchWithNoPagingSuccess = createAction(
     props<{ products: IProducts[] }>()
 );
 
+export const createProduct = createAction(
+    '[Products/API] Create Product',
+    props<{ product: Products }>()
+);
+
 export const saveProduct = createAction(
     '[Products/API] Save Product',
     props<{ product: IProducts }>()
@@ -44,7 +49,7 @@ export const saveProductSuccess = createAction(
 
 export const saveStockItem = createAction(
     '[Products/API] Save StockItem',
-    props<{ stockItems: IStockItems[] }>()
+    props<{ stockItems: IStockItems[], product: IProducts }>()
 );
 
 export const saveStockItemSuccess = createAction(
@@ -56,7 +61,7 @@ export const saveStockItemListSuccess = createAction('[Products/API] Save StockI
 
 export const saveStockItemPhoto = createAction(
     '[Products/API] Save StockItem Photo',
-    props<{ photo: IPhotos }>()
+    props<{ photos: IPhotos[], stockItem: IStockItems }>()
 );
 
 export const saveStockItemPhotoSuccess = createAction(

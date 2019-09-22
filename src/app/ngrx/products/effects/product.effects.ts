@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { asyncScheduler, EMPTY as empty, of, forkJoin } from 'rxjs';
-import { catchError, debounceTime, map, skip, switchMap, takeUntil, filter, exhaustMap, flatMap, mergeMap } from 'rxjs/operators';
+import { asyncScheduler, EMPTY as empty, of, forkJoin, from } from 'rxjs';
+import { catchError, debounceTime, map, skip, switchMap, takeUntil, filter, exhaustMap, flatMap, mergeMap, concatAll, concat } from 'rxjs/operators';
 import { JhiParseLinks } from 'ng-jhipster';
-import { IProducts, IPhotos, IStockItems } from '@root/models';
+import { IProducts,Products, IPhotos, IStockItems } from '@root/models';
 import { ProductActions } from '../actions';
 import { ProductsService, StockItemsService, PhotosService } from '@root/services';
-import { IOptions } from 'minimatch';
 import * as _ from 'lodash';
 import { RootUtils } from '@root/utils';
+import { SERVER_API_URL } from '@root/constants';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class ProductEffects {
@@ -78,6 +79,25 @@ export class ProductEffects {
             )
     );
 
+    postProduct$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(ProductActions.createProduct),
+            mergeMap(({ product }) =>
+                this.productsService.createProducts(product).pipe(
+                    filter((res: HttpResponse<Products>) => res.ok),
+                    switchMap((res: HttpResponse<Products>) =>
+                        [
+                            ProductActions.saveProductSuccess({ product: res.body })
+                        ]
+                    ),
+                    // tap(() => this.router.navigate(['/checkout/payment'])),
+                    catchError(err =>
+                        of(ProductActions.productFailure({ errorMsg: err.message }))
+                    )
+                )
+            )
+        )
+    );
 
 
     saveProduct$ = createEffect(() =>
@@ -88,17 +108,17 @@ export class ProductEffects {
                 if (!product) {
                     return empty;
                 }
-
-                return this.productsService.create(product).pipe(
-                    filter((res: HttpResponse<IProducts>) => res.ok),
-                    switchMap((res: HttpResponse<IProducts>) => [
-                        ProductActions.saveProductSuccess({ product: res.body }),
-                        ProductActions.saveStockItem({ stockItems: product.stockItemLists }),
-                    ]),
-                    catchError(err =>
-                        of(ProductActions.productFailure({ errorMsg: err.message }))
-                    )
-                );
+                this.productsService.saveProduct(product);
+                // return this.productsService.create(product).pipe(
+                //     filter((res: HttpResponse<IProducts>) => res.ok),
+                //     switchMap((res: HttpResponse<IProducts>) => [
+                //         ProductActions.saveProductSuccess({ product: res.body }),
+                //         ProductActions.saveStockItem({ stockItems: product.stockItemLists, product: res.body }),
+                //     ]),
+                //     catchError(err =>
+                //         of(ProductActions.productFailure({ errorMsg: err.message }))
+                //     )
+                // );
             })
         )
     );
@@ -126,80 +146,90 @@ export class ProductEffects {
     //     )
     // );
 
-    saveStockItemPhoto$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(ProductActions.saveStockItemPhoto),
-            switchMap(({ photo }) => {
-                console.log('save stockItem', photo)
-                if (!photo) {
-                    return empty;
-                }
-
-                return this.photosService.create(photo).pipe(
-                    filter((res: HttpResponse<IPhotos>) => res.ok),
-                    map((res: HttpResponse<IPhotos>) => ProductActions.saveStockItemPhotoSuccess({ photo: res.body })),
-                    catchError(err =>
-                        of(ProductActions.productFailure({ errorMsg: err.message }))
-                    )
-                );
-            })
-        )
-    );
+    // saveStockItemPhoto$ = createEffect(() =>
+    //     this.actions$.pipe(
+    //         ofType(ProductActions.saveStockItemPhoto),
+    //         switchMap(({ photo, stockItem }) => {
+    //             if (!photo) {
+    //                 return empty;
+    //             }
+    //             photo.stockItemId = stockItem.id;
+    //             console.log('save photo', photo, stockItem)
+    //             return this.photosService.create(photo).pipe(
+    //                 filter((res: HttpResponse<IPhotos>) => res.ok),
+    //                 map((res: HttpResponse<IPhotos>) => ProductActions.saveStockItemPhotoSuccess({ photo: res.body })),
+    //                 catchError(err =>
+    //                     of(ProductActions.productFailure({ errorMsg: err.message }))
+    //                 )
+    //             );
+    //         })
+    //     )
+    // );
 
     saveStockItems$ = createEffect(() =>
         this.actions$.pipe(
             ofType(ProductActions.saveStockItem),
-            exhaustMap(({ stockItems }) => {
+            switchMap(({ stockItems, product }) => {
                 if (!stockItems.length) {
                     return empty;
                 }
-                return forkJoin(stockItems.map(stockItem =>
-                    this.stockItemsService.create(stockItem).pipe(
-                        filter((res: HttpResponse<IStockItems>) => res.ok),
-                        map((res: HttpResponse<IStockItems>) => ProductActions.saveStockItemSuccess({ stockItem: res.body })
-                            // [
-                            //     ProductActions.saveStockItemSuccess({ stockItem: res.body }),
-                            //     ProductActions.saveStockItemPhoto({ photos: stockItem.photoLists })
-                            // ]
-                        ),
-                        catchError(err =>
-                            of(ProductActions.productFailure({ errorMsg: err.message }))
+
+                from(
+                    stockItems.map(stockItem => {
+                        stockItem.productId = product.id;
+                        stockItem.stockItemName = product.productName;
+                        stockItem.thumbnailUrl = SERVER_API_URL + 'api/photos-extend?stockitem=' + stockItem.id;
+                        return this.stockItemsService.create(stockItem).pipe(
+                            filter((res: HttpResponse<IStockItems>) => res.ok),
+                            map((res: HttpResponse<IStockItems>) => ProductActions.saveStockItemSuccess({ stockItem: res.body })
+                                // of(ProductActions.saveStockItemPhoto({ photos: stockItem.photoLists, stockItem: res.body }))
+                                // [
+                                //     ProductActions.saveStockItemSuccess({ stockItem: res.body }),
+                                //     ProductActions.saveStockItemPhoto({ photos: stockItem.photoLists })
+                                // ]
+                            ),
+                            // catchError(err =>
+                            //     of(ProductActions.productFailure({ errorMsg: err.message }))
+                            // )                            
                         )
-                    )
-                )).pipe(
+                    })
+                ).pipe(
+                    // map(() => {
+                    //     return ProductActions.saveStockItemListSuccess();
+                    // })
+                    concatAll(),
+                    concat(of(ProductActions.saveStockItemListSuccess()))
+                ).subscribe(console.log);
+            })
+        )
+    );
+
+    saveStockItemPhotos$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(ProductActions.saveStockItemPhoto),
+            switchMap(({ photos, stockItem }) => {
+                console.log('working with photos', photos)
+                if (!photos.length) {
+                    return empty;
+                }
+                return forkJoin(
+                    photos.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
+                        photo.stockItemId = stockItem.id;
+                        this.photosService.create(photo).pipe(
+                            filter((res: HttpResponse<IPhotos>) => res.ok),
+                            map((res: HttpResponse<IPhotos>) => of(ProductActions.saveStockItemPhotoSuccess({ photo: res.body }))),
+                            catchError(err =>
+                                of(ProductActions.productFailure({ errorMsg: err.message }))
+                            ))
+                    })
+                ).pipe(
                     map(() => {
-                        return ProductActions.saveStockItemListSuccess();
+                        return ProductActions.saveStockItemPhotoListSuccess();
                     })
                 )
             })
         )
     );
-
-    // saveStockItemPhotos$ = createEffect(() =>
-    //     this.actions$.pipe(
-    //         ofType(ProductActions.saveStockItemPhoto),
-    //         exhaustMap(({ photos }) => {
-    //             if (!photos.length) {
-    //                 return empty;
-    //             }
-
-    //             return forkJoin(
-    //                 photos.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
-    //                     this.photosService.create(photo).pipe(
-    //                         filter((res: HttpResponse<IPhotos>) => res.ok),
-    //                         map((res: HttpResponse<IPhotos>) => ProductActions.saveStockItemPhotoSuccess({ photo: res.body })),
-    //                         catchError(err =>
-    //                             of(ProductActions.productFailure({ errorMsg: err.message }))
-    //                         ))
-    //                 })
-    //             ).pipe(
-    //                 map(() => {
-    //                     return ProductActions.saveStockItemPhotoListSuccess();
-    //                 })
-    //             )
-    //         })
-    //     )
-    // );
 
     constructor(
         private actions$: Actions,

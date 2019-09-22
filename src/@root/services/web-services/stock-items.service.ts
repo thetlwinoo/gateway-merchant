@@ -19,6 +19,7 @@ export class StockItemsService {
 
     create(stockItems: IStockItems): Observable<EntityResponseType> {
         const copy = this.convertDateFromClient(stockItems);
+        console.log('check stock item',copy)
         return this.http
             .post<IStockItems>(this.resourceUrl, copy, { observe: 'response' })
             .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));

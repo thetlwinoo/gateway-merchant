@@ -3,8 +3,8 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 import { HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { ProductsService } from '@root/services';
-import { IProducts } from '@root/models';
+import { ProductsService, StockItemsService } from '@root/services';
+import { IProducts, IStockItems } from '@root/models';
 
 @Injectable()
 export class ManageProductsService implements Resolve<any>
@@ -13,7 +13,8 @@ export class ManageProductsService implements Resolve<any>
     onProductsChanged: BehaviorSubject<any>;
 
     constructor(
-        private productsService: ProductsService
+        private productsService: ProductsService,
+        private stockItemsService: StockItemsService
     ) {
         this.onProductsChanged = new BehaviorSubject({});
     }
@@ -34,10 +35,10 @@ export class ManageProductsService implements Resolve<any>
 
     getProducts(): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.productsService.query()
+            this.stockItemsService.query()
                 .pipe(
-                    filter((res: HttpResponse<IProducts[]>) => res.ok),
-                    map((res: HttpResponse<IProducts[]>) => res.body)
+                    filter((res: HttpResponse<IStockItems[]>) => res.ok),
+                    map((res: HttpResponse<IStockItems[]>) => res.body)
                 )
                 .subscribe((response: any) => {
                     console.log('response',response)

@@ -65,5 +65,7 @@ export class Photos implements IPhotos {
         public stockItemId?: number
     ) {
         this.defaultInd = this.defaultInd || false;
+        this.originalPhotoBlobContentType = this.originalPhotoBlobContentType || null;
+        this.originalPhotoBlob = this.originalPhotoBlob || null;
     }
 }

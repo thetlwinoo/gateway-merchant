@@ -9,8 +9,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { rootAnimations } from '@root/animations';
 import { RootUtils } from '@root/utils';
 
-import { IProducts, Products, IMerchants } from '@root/models';
-import { ManageProductService } from '@root/services';
+import { IProducts, Products, IMerchants, ProductCategory, ProductModel, ProductBrand, ProductAttribute, ProductOption } from '@root/models';
+import { ManageProductService, ProductModelService } from '@root/services';
 
 import { locale as english } from './i18n/en';
 import { locale as myanmar } from './i18n/mm';
@@ -69,6 +69,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
     this.activatedRoute.data
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(({ products }) => {
+        console.log('product', products)
         this.products = products;
         this.productsForm = this.createProductForm();
       });
@@ -121,16 +122,40 @@ export class AddProductComponent implements OnInit, OnDestroy {
     const data = this.productsForm.getRawValue();
     data.stockItemLists = this.products.stockItemLists;
     data.searchDetails = data.productName ? data.productName : '';
-    data.merchantId = this.merchant ? this.merchant.id : null;
+    // data.merchantId = this.merchant ? this.merchant.id : null;
+    data.merchant = this.merchant ? this.merchant : null;
+
+    const _productCategory = new ProductCategory();
+    _productCategory.id = data.productCategoryId;
+    data.productCategory = _productCategory;
+
+    const _productModel = new ProductModel();
+    _productModel.id = data.productModelId;
+    data.productModel = _productModel;
+
+    const _productBrand = new ProductBrand();
+    _productBrand.id = data.productBrandId;
+    data.productBrand = _productBrand;
+
     data.handle = data.productName ? RootUtils.handleize(data.productName) : null;
     data.productNumber = data.handle;
 
-    this.store.dispatch(ProductActions.saveProduct({ product: data }));
     data.stockItemLists.map(stockItem => {
-      stockItem.photoLists.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
-        this.store.dispatch(ProductActions.saveStockItemPhoto({ photo: photo }));
-      })
+      const productAttribute = new ProductAttribute();
+      productAttribute.id = stockItem.productAttributeId;
+      stockItem.productAttribute = productAttribute;
+
+      const productOption = new ProductOption();
+      productOption.id = stockItem.productOptionId;
+      stockItem.productOption = productOption;
     });
+    
+    this.store.dispatch(ProductActions.createProduct({ product: data }));
+    // data.stockItemLists.map(stockItem => {
+    //   stockItem.photoLists.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
+    //     this.store.dispatch(ProductActions.saveStockItemPhoto({ photo: photo, stockItem: stockItem }));
+    //   })
+    // });
 
     // this._ecommerceProductService.saveProduct(data)
     //   .then(() => {
