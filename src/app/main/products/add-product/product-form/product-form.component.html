@@ -7,7 +7,8 @@
 
     <mat-form-field class="w-100-p">
         <mat-label>Category</mat-label>
-        <input #category matInput placeholder="Category" name="category" formControlName="productCategoryName" required>
+        <input #category matInput placeholder="Category" name="category" formControlName="productCategoryName" required
+            readonly>
         <button type="button" matSuffix mat-button aria-label="Select Category" (click)="selectCategory()">
             Select Category
         </button>
@@ -22,9 +23,9 @@
 
     <mat-form-field class="w-100-p">
         <mat-label>Brand</mat-label>
-        <mat-select formControlName="productBrandId" #brandSelect>
+        <mat-select formControlName="productBrand" #brandSelect [compareWith]="compareObjects">
             <mat-option value="" selected>No Brand</mat-option>
-            <mat-option *ngFor="let brand of (productBrands$ | async)" [value]="brand.id">
+            <mat-option *ngFor="let brand of (productBrands$ | async)" [value]="brand">
                 {{brand.productBrandName}}
             </mat-option>
         </mat-select>
@@ -32,11 +33,11 @@
 
     <mat-form-field class="w-100-p">
         <mat-label>Model</mat-label>
-        <mat-select formControlName="productModelId" #modelSelect>
+        <mat-select formControlName="productModel" #modelSelect [compareWith]="compareObjects">
             <mat-select-filter *ngIf="modelSelect.focused" [array]="productModels$ | async"
                 [displayMember]="'productModelName'" (filteredReturn)="productModelsFiltered = $event">
             </mat-select-filter>
-            <mat-option *ngFor="let model of productModelsFiltered" [value]="model.id">
+            <mat-option *ngFor="let model of productModelsFiltered" [value]="model">
                 {{model.productModelName}}
             </mat-option>
         </mat-select>
@@ -44,8 +45,8 @@
 
     <mat-form-field class="w-100-p">
         <mat-label>Warranty Types</mat-label>
-        <mat-select formControlName="warrantyTypeId" #warrantyTypeSelect>            
-            <mat-option *ngFor="let warrantyType of (warrantyTypes$ | async)" [value]="warrantyType.id">
+        <mat-select formControlName="warrantyType" #warrantyTypeSelect [compareWith]="compareObjects">
+            <mat-option *ngFor="let warrantyType of (warrantyTypes$ | async)" [value]="warrantyType">
                 {{warrantyType.warrantyTypeName}}
             </mat-option>
         </mat-select>

@@ -1,0 +1,52 @@
+<mat-table #productList [dataSource]="dataSource" [@animateStagger]="{value:'50'}" matSort matSortActive="id"
+    matSortDirection="asc" matSortDisableClear>
+    <ng-container matColumnDef="stockItemName">
+        <mat-header-cell *matHeaderCellDef fxFlex="200px">Product</mat-header-cell>
+        <mat-cell *matCellDef="let row" fxFlex="200px"> {{row.stockItemName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="sellerSKU">
+        <mat-header-cell *matHeaderCellDef fxFlex="100px">SKU</mat-header-cell>
+        <mat-cell *matCellDef="let row" fxFlex="100px"> {{row.sellerSKU}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="photoList">
+        <mat-header-cell *matHeaderCellDef>All Images</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <div class="upload-wrapper">
+
+                <div class="upload-item" *ngFor="let photo of row.photoLists; let i = index">
+
+                    <input hidden type="file" accept="image/*" [id]="photo.id" #originalBlob [style.display]="'none'"
+                        (change)="setFileData($event, photo, 'originalPhotoBlob', true)" />
+
+                    <div class="upload-control" *ngIf="!photo.originalPhotoBlob;else preview">
+                        <span>
+                            <div class="image-upload-btn" (click)="originalBlob.click()">
+                                <mat-icon class="next-icon next-icon-add next-icon-medium upload-btn-icon">
+                                    add_a_photo</mat-icon>
+                                <p class="upload-text">Upload Image</p>
+                            </div>
+                        </span>
+                    </div>
+                    <ng-template #preview>
+                        <div>
+                            <a (click)="clearInputImage(photo)" class="close-image" matTooltip="Clear Image">
+                                <mat-icon>close</mat-icon>
+                            </a>
+                        </div>
+                        <div class="image-preview">
+                            <img [src]="'data:' + photo.thumbnailPhotoBlobContentType + ';base64,' + photo.thumbnailPhotoBlob"
+                                style="max-height: 100px;" alt="stock item image" draggable="false" />
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+</mat-table>
+<mat-paginator [length]="100" [pageSize]="20" [pageSizeOptions]="[20, 50, 100]"></mat-paginator>

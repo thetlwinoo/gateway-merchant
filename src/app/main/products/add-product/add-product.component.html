@@ -13,7 +13,7 @@
             <!-- APP TITLE -->
             <div fxLayout="row" fxLayoutAlign="start center">
 
-                <button mat-icon-button class="mr-0 mr-sm-16" [routerLink]="'/apps/e-commerce/products'">
+                <button mat-icon-button class="mr-0 mr-sm-16" [routerLink]="'/products/manage-products'">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
 
@@ -37,16 +37,16 @@
             </div>
             <!-- / APP TITLE -->
 
-            <button mat-raised-button class="save-product-button" [disabled]="productForm.invalid"
+            <!-- <button mat-raised-button class="save-product-button" [disabled]="productForm.invalid"
                 *ngIf="pageType ==='new'" (click)="addProduct()">
                 <span>ADD</span>
-            </button>
+            </button> -->
 
-            <button mat-raised-button class="save-product-button"
+            <!-- <button mat-raised-button class="save-product-button"
                 [disabled]="productForm.invalid || productForm.pristine" *ngIf="pageType ==='edit'"
                 (click)="saveProduct()">
                 <span>SAVE</span>
-            </button>
+            </button> -->
 
             <button mat-raised-button class="publish-product-button" (click)="saveProduct()">
                 <span>PUBLISH</span>
@@ -107,27 +107,8 @@
 
                     <mat-tab label="Decoration">
                         <div class="tab-content p-24" fusePerfectScrollbar>
-                            <h3 class="first">Long Description</h3>
-                            <p-editor [(ngModel)]="description" [style]="{'height':'400px'}"></p-editor>
-                            <h3 class="first">Highlights</h3>
-                            <p-editor [(ngModel)]="description" [style]="{'height':'300px'}">
-                                <p-header>
-                                    <span class="ql-formats">
-                                        <select class="ql-size">
-                                            <option value="small"></option>
-                                            <!-- Note a missing, thus falsy value, is used to reset to default -->
-                                            <option selected></option>
-                                            <option value="large"></option>
-                                            <option value="huge"></option>
-                                        </select>
-                                        <button class="ql-bold" aria-label="Bold"></button>
-                                        <button class="ql-italic" aria-label="Italic"></button>
-                                        <button class="ql-underline" aria-label="Underline"></button>
-                                        <button class="ql-script" value="sub"></button>
-                                        <button class="ql-script" value="super"></button>
-                                    </span>
-                                </p-header>
-                            </p-editor>
+                            <product-decoration [productsForm]="productsForm" [products]="products">
+                            </product-decoration>                            
                         </div>
                     </mat-tab>
 

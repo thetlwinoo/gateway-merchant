@@ -17,6 +17,9 @@ import { IProducts, Products } from '@root/models';
 import { ProductsService } from '@root/services';
 import { Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
+import { ProductDecorationComponent } from './add-product/product-decoration/product-decoration.component';
+import { ProductsDTO } from '@root/dto';
+import { ProductListComponent } from './manage-images/product-list/product-list.component';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsResolve implements Resolve<IProducts> {
@@ -25,12 +28,18 @@ export class ProductsResolve implements Resolve<IProducts> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IProducts> {
     const id = route.params['id'] ? route.params['id'] : null;
     if (id) {
-      return this.service.find(id).pipe(
-        filter((response: HttpResponse<Products>) => response.ok),
-        map((products: HttpResponse<Products>) => products.body)
+      return this.service.getOne(id).pipe(
+        filter((res: HttpResponse<Products>) => res.ok),
+        map((res: HttpResponse<Products>) => {
+
+          const products = new ProductsDTO(res.body);
+
+          console.log('converted product', products);
+          return products;
+        })
       );
     }
-    return of(new Products());
+    return of(new ProductsDTO());
   }
 }
 
@@ -72,6 +81,18 @@ const routes = [
     canActivate: [UserRouteAccessService]
   },
   {
+    path: 'manage-products/:id',
+    component: AddProductComponent,
+    resolve: {
+      products: ProductsResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'PRODUCTS.TITLE'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
     path: 'manage-products/:id/:handle',
     component: AddProductComponent,
     resolve: {
@@ -101,7 +122,9 @@ const routes = [
     ManageImagesComponent,
     ProductFormComponent,
     CategoryFormComponent,
-    ProductSkuFormComponent
+    ProductSkuFormComponent,
+    ProductDecorationComponent,
+    ProductListComponent
   ],
   imports: [
     CommonModule,

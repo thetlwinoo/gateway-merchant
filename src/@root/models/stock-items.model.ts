@@ -87,6 +87,7 @@ export class StockItems implements IStockItems {
         this.guid = RootUtils.generateGUID();
         this.handle = this.stockItemName ? RootUtils.handleize(this.stockItemName) : null;
 
+        console.log('photoLists',photoLists)
         if (photoLists && photoLists.length) {
             for (var _i = 0; _i < (8 - photoLists.length); _i++) {
                 const IPhotos = new Photos();

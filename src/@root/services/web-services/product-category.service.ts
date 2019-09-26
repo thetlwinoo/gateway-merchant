@@ -39,5 +39,5 @@ export class ProductCategoryService {
 
     fetch(): Observable<EntityArrayResponseType> {
         return this.http.get<IProductCategory[]>(this.extendUrl, { observe: 'response' });
-    }
+    }    
 }

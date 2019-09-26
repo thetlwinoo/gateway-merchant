@@ -37,6 +37,11 @@ export const createProduct = createAction(
     props<{ product: Products }>()
 );
 
+export const updateProduct = createAction(
+    '[Products/API] Update Product',
+    props<{ product: Products }>()
+);
+
 export const saveProduct = createAction(
     '[Products/API] Save Product',
     props<{ product: IProducts }>()

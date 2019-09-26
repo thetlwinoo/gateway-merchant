@@ -32,7 +32,7 @@
             <!-- / SEARCH -->
 
             <!-- ADD BUTTON -->
-            <button mat-raised-button [routerLink]="'/apps/e-commerce/products/new'"
+            <button mat-raised-button [routerLink]="'/products/manage-products/new'"
                 class="add-product-button fuse-white mt-24 mt-md-0">
                 <span>ADD NEW PRODUCT</span>
             </button>
@@ -50,19 +50,19 @@
                 <!-- ID Column -->
                 <!-- <ng-container matColumnDef="id">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                    <mat-cell *matCellDef="let product">
-                        <p class="text-truncate">{{product.id}}</p>
+                    <mat-cell *matCellDef="let stockItem">
+                        <p class="text-truncate">{{stockItem.id}}</p>
                     </mat-cell>
                 </ng-container> -->
 
                 <!-- Image Column -->
                 <ng-container matColumnDef="thumbnailUrl">
                     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                    <mat-cell *matCellDef="let product">
+                    <mat-cell *matCellDef="let stockItem">
                         <img class="product-image"
-                             *ngIf="product.thumbnailUrl" [alt]="product.productName"
-                             [src]="product.thumbnailUrl"/>
-                        <img *ngIf="!product.thumbnailUrl"
+                             *ngIf="stockItem.thumbnailUrl" [alt]="stockItem.stockItemName"
+                             [src]="stockItem.thumbnailUrl"/>
+                        <img *ngIf="!stockItem.thumbnailUrl"
                              [src]="'assets/images/ecommerce/product-image-placeholder.png'">
                     </mat-cell>
                 </ng-container>
@@ -70,17 +70,17 @@
                 <!-- Name Column -->
                 <ng-container matColumnDef="stockItemName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                    <mat-cell *matCellDef="let product">
-                        <p class="text-truncate">{{product.stockItemName}}</p>
+                    <mat-cell *matCellDef="let stockItem">
+                        <p class="text-truncate">{{stockItem.stockItemName}}</p>
                     </mat-cell>
                 </ng-container>                
 
                 <!-- Category Column -->
                 <ng-container matColumnDef="productAttributeValue">
                     <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Color</mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-md>
                         <p class="category text-truncate">
-                            {{product.productAttributeValue}}
+                            {{stockItem.productAttributeValue}}
                         </p>
                     </mat-cell>
                 </ng-container>
@@ -89,9 +89,9 @@
                 <ng-container matColumnDef="productOptionValue">
                     <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Bedding Size
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-md>
                         <p class="category text-truncate">
-                            {{product.productOptionValue}}
+                            {{stockItem.productOptionValue}}
                         </p>
                     </mat-cell>
                 </ng-container>
@@ -99,9 +99,9 @@
                 <!-- Price Column -->
                 <ng-container matColumnDef="unitPrice">
                     <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Unit Price</mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-xs>
                         <p class="price text-truncate">
-                            {{product.unitPrice | currency:'USD':'symbol'}}
+                            {{stockItem.unitPrice | currency:'USD':'symbol'}}
                         </p>
                     </mat-cell>
                 </ng-container>
@@ -110,9 +110,9 @@
                 <ng-container matColumnDef="recommendedRetailPrice">
                     <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Recommended Retail Price
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-xs>
                         <p class="price text-truncate">
-                            {{product.recommendedRetailPrice | currency:'USD':'symbol'}}
+                            {{stockItem.recommendedRetailPrice | currency:'USD':'symbol'}}
                         </p>
                     </mat-cell>
                 </ng-container>
@@ -120,13 +120,13 @@
                 <!-- Quantity Column -->
                 <!-- <ng-container matColumnDef="quantity">
                     <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-sm>Quantity</mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-sm>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-sm>
 
                         <span class="quantity-indicator text-truncate"
-                              [ngClass]="{'red-500':product.quantity <= 5, 'amber-500':product.quantity > 5 && product.quantity <= 25,'green-600':product.quantity > 25}">
+                              [ngClass]="{'red-500':stockItem.quantity <= 5, 'amber-500':stockItem.quantity > 5 && stockItem.quantity <= 25,'green-600':stockItem.quantity > 25}">
                         </span>
                         <span>
-                            {{product.quantity}}
+                            {{stockItem.quantity}}
                         </span>
 
                     </mat-cell>
@@ -135,9 +135,9 @@
                 <!-- Active Column -->
                 <!-- <ng-container matColumnDef="active">
                     <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Active</mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
-                        <mat-icon *ngIf="product.active" class="active-icon green-600 s-16">check</mat-icon>
-                        <mat-icon *ngIf="!product.active" class="active-icon red-500 s-16">close</mat-icon>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="stockItem.active" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="!stockItem.active" class="active-icon red-500 s-16">close</mat-icon>
                     </mat-cell>
                 </ng-container> -->
 
@@ -145,17 +145,17 @@
                 <ng-container matColumnDef="createdDate">
                     <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-sm>Created Date
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-sm>
+                    <mat-cell *matCellDef="let stockItem" fxHide fxShow.gt-sm>
                         <p class="text-truncate">
-                            {{product.createdDate | date:'mediumDate'}}
+                            {{stockItem.createdDate | date:'mediumDate'}}
                         </p>
                     </mat-cell>
                 </ng-container>
 
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
 
-                <mat-row *matRowDef="let product; columns: displayedColumns;" class="product" matRipple
-                    [routerLink]="'/apps/e-commerce/products/'+product.id+'/'+product.handle">
+                <mat-row *matRowDef="let stockItem; columns: displayedColumns;" class="product" matRipple
+                    [routerLink]="'/products/manage-products/'+stockItem.productId">
                 </mat-row>
 
             </mat-table>

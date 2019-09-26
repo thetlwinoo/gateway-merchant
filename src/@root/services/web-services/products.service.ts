@@ -58,51 +58,60 @@ export class ProductsService {
         return this.http.get<IProducts[]>(this.extendUrl + '/searchall', { params: params, observe: 'response' });
     }
 
+    getOne(id: number): Observable<EntityResponseType> {
+        return this.http.get<IProducts>(`${this.extendUrl}/${id}`, { observe: 'response' });
+    }
+
     createProducts(products: Products): Observable<EntityResponseType> {
-        console.log('post products',products)
+        console.log('post products', products)        
         return this.http.post<Products>(this.extendUrl + '/products', products, { observe: 'response' });
     }
 
-    saveProduct(product: IProducts): void {
-        this.create(product)
-            .pipe(
-                filter((res: HttpResponse<IProducts>) => res.ok),
-                map((res: HttpResponse<IProducts>) => res.body)
-            )
-            .subscribe(productSuccess => {
-                console.log('product done', productSuccess);
-                productSuccess.stockItemLists.map(stockItem => {
-
-                    stockItem.productId = productSuccess.id;
-                    stockItem.stockItemName = productSuccess.productName;
-
-                    this.stockItemsService.create(stockItem)
-                        .pipe(
-                            filter((res: HttpResponse<IStockItems>) => res.ok),
-                            map((res: HttpResponse<IStockItems>) => res.body)
-                        )
-                        .subscribe(stockItemSuccess => {
-                            stockItemSuccess.thumbnailUrl = SERVER_API_URL + 'api/photos-extend?stockitem=' + stockItemSuccess.id;
-                            console.log('stockItem done', stockItemSuccess);
-                            this.stockItemsService.update(stockItemSuccess).pipe(
-                                filter((res: HttpResponse<IStockItems>) => res.ok),
-                                map((res: HttpResponse<IStockItems>) => res.body)
-                            ).subscribe(result => {
-                                console.log('update result', result);
-
-                                stockItem.photoLists.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
-                                    photo.stockItemId = stockItemSuccess.id;
-                                    this.photosService.create(photo)
-                                        .pipe(
-                                            filter((res: HttpResponse<IPhotos>) => res.ok),
-                                            map((res: HttpResponse<IPhotos>) => res.body)
-                                        ).subscribe(photoSuccess => console.log('photo done', photoSuccess))
-                                })
-                            })
-
-
-                        })
-                })
-            })
+    updateProducts(products: Products): Observable<EntityResponseType> {
+        console.log('update products', products)
+        return this.http.put<Products>(this.extendUrl + '/products', products, { observe: 'response' });
     }
+
+    // saveProduct(product: IProducts): void {
+    //     this.create(product)
+    //         .pipe(
+    //             filter((res: HttpResponse<IProducts>) => res.ok),
+    //             map((res: HttpResponse<IProducts>) => res.body)
+    //         )
+    //         .subscribe(productSuccess => {
+    //             console.log('product done', productSuccess);
+    //             productSuccess.stockItemLists.map(stockItem => {
+
+    //                 stockItem.productId = productSuccess.id;
+    //                 stockItem.stockItemName = productSuccess.productName;
+
+    //                 this.stockItemsService.create(stockItem)
+    //                     .pipe(
+    //                         filter((res: HttpResponse<IStockItems>) => res.ok),
+    //                         map((res: HttpResponse<IStockItems>) => res.body)
+    //                     )
+    //                     .subscribe(stockItemSuccess => {
+    //                         stockItemSuccess.thumbnailUrl = SERVER_API_URL + 'api/photos-extend?stockitem=' + stockItemSuccess.id;
+    //                         console.log('stockItem done', stockItemSuccess);
+    //                         this.stockItemsService.update(stockItemSuccess).pipe(
+    //                             filter((res: HttpResponse<IStockItems>) => res.ok),
+    //                             map((res: HttpResponse<IStockItems>) => res.body)
+    //                         ).subscribe(result => {
+    //                             console.log('update result', result);
+
+    //                             stockItem.photoLists.filter(x => RootUtils.notEmpty(x.originalPhotoBlob)).map(photo => {
+    //                                 photo.stockItemId = stockItemSuccess.id;
+    //                                 this.photosService.create(photo)
+    //                                     .pipe(
+    //                                         filter((res: HttpResponse<IPhotos>) => res.ok),
+    //                                         map((res: HttpResponse<IPhotos>) => res.body)
+    //                                     ).subscribe(photoSuccess => console.log('photo done', photoSuccess))
+    //                             })
+    //                         })
+
+
+    //                     })
+    //             })
+    //         })
+    // }
 }

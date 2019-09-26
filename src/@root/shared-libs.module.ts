@@ -31,7 +31,10 @@ import { MatSelectFilterModule } from 'mat-select-filter';
 import { TreeModule } from 'primeng/tree';
 import { TableModule } from 'primeng/table';
 import { EditorModule } from 'primeng/editor';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
 
+import { NgxPicaModule } from '@digitalascetic/ngx-pica';
 @NgModule({
     imports: [
         CookieModule.forRoot(),
@@ -59,10 +62,13 @@ import { EditorModule } from 'primeng/editor';
         AgmCoreModule,
 
         MatSelectFilterModule,
+        NgxPicaModule,
         //primeng modules
         TreeModule,
         TableModule,
-        EditorModule
+        EditorModule,
+        InputTextModule,
+        DropdownModule
     ],
     exports: [
         FormsModule,
@@ -94,10 +100,13 @@ import { EditorModule } from 'primeng/editor';
         AgmCoreModule,
 
         MatSelectFilterModule,
+        NgxPicaModule,
         //primeng modules
         TreeModule,
         TableModule,
-        EditorModule
+        EditorModule,
+        InputTextModule,
+        DropdownModule
     ]
 })
 export class ResourceSharedLibsModule {

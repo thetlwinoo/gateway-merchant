@@ -89,14 +89,19 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         if (!response) {
           return;
         }
-
+        
         this.store.dispatch(CategoryActions.selectCategory({ id: response.data.id }));
         this.productsForm.patchValue({
-          productCategoryId: response.data.id,
-          productCategoryName: response.data.parentName + '>>' + response.label
+          // productCategoryId: response.data.id,
+          productCategoryName: response.data.parentName + " / " + response.label,
+          productCategory: response.data
         })
         // this._contactsService.updateContact(response.getRawValue());
       });
+  }
+
+  compareObjects(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
   ngOnDestroy(): void {

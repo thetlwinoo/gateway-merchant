@@ -60,7 +60,7 @@
     </div>
 </form>
 
-<p-table [columns]="stockItemsColumns" [value]="products.stockItemLists" dataKey="guid" [responsive]="true">
+<p-table [columns]="stockItemsColumns" [value]="products.stockItemLists" [responsive]="true" dataKey="guid">
     <ng-template pTemplate="caption">
         Stock Item Product
     </ng-template>
@@ -80,7 +80,29 @@
                     <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
                 </a>
             </td>
-            <td pEditableColumn *ngFor="let col of columns" [hidden]="col.header=='guid'">
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <p-dropdown [options]="productAttributeListCombo" [(ngModel)]="rowData.productAttribute"
+                            disabled></p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData.productAttribute.value}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <p-dropdown [options]="productOptionListCombo" [(ngModel)]="rowData.productOption" disabled>
+                        </p-dropdown>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{rowData.productOption.value}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td pEditableColumn *ngFor="let col of columns|slice:3:11">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
                         <input pInputText type="text" [(ngModel)]="rowData[col.field]">
@@ -96,15 +118,16 @@
         <tr>
             <td [attr.colspan]="columns.length">
                 <div class="upload-wrapper">
+
                     <div class="upload-item" *ngFor="let photo of rowData.photoLists; let i = index">
 
-                        <input hidden type="file" accept="image/*" [id]="photo.id" #fileInput [style.display]="'none'"
-                            (change)="setFileData($event, photo, 'originalPhotoBlob', true)" />
+                        <input hidden type="file" accept="image/*" [id]="photo.id" #originalBlob
+                            [style.display]="'none'" (change)="setFileData($event, photo, 'originalPhotoBlob', true)" />
 
                         <div class="upload-control" *ngIf="!photo.originalPhotoBlob;else preview">
                             <span>
                                 <!--  -->
-                                <div class="image-upload-btn" (click)="fileInput.click()">
+                                <div class="image-upload-btn" (click)="originalBlob.click()">
                                     <!-- <fa-icon icon="image"
                                         class="next-icon next-icon-add next-icon-medium upload-btn-icon">
                                     </fa-icon> -->
@@ -116,13 +139,12 @@
                         </div>
                         <ng-template #preview>
                             <div>
-                                <a (click)="clearInputImage(photo,'originalPhotoBlob', 'originalPhotoBlobContentType', 'fileImage')"
-                                    class="close-image" matTooltip="Clear Image">
+                                <a (click)="clearInputImage(photo)" class="close-image" matTooltip="Clear Image">
                                     <mat-icon>close</mat-icon>
                                 </a>
                             </div>
                             <div class="image-preview">
-                                <img [src]="'data:' + photo.originalPhotoBlobContentType + ';base64,' + photo.originalPhotoBlob"
+                                <img [src]="'data:' + photo.thumbnailPhotoBlobContentType + ';base64,' + photo.thumbnailPhotoBlob"
                                     style="max-height: 100px;" alt="stock item image" draggable="false" />
                             </div>
                         </ng-template>

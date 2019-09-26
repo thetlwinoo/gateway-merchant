@@ -1,3 +1,5 @@
+export * from './datasources/stock-items.datasource';
+
 export * from './web-services/merchants.service';
 export * from './web-services/products.service';
 export * from './web-services/product-category.service';

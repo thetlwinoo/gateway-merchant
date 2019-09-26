@@ -5,6 +5,7 @@ import { RootUtils } from '@root/utils';
 export interface IProducts {
     id?: number;
     productName?: string;
+    handle?: string;
     productNumber?: string;
     searchDetails?: string;
     thumbnailUrl?: string;
@@ -39,6 +40,7 @@ export class Products implements IProducts {
     constructor(
         public id?: number,
         public productName?: string,
+        public handle?: string,
         public productNumber?: string,
         public searchDetails?: string,
         public thumbnailUrl?: string,
@@ -66,16 +68,19 @@ export class Products implements IProducts {
         public productAttributeIds?: number[],
         public productOptionIds?: number[],
         public productAttributeList?: IProductAttribute[],
-        public productOptionList?: IProductOption[]
+        public productOptionList?: IProductOption[],        
     ) {
         this.stockItemLists = stockItemLists ? stockItemLists : [];
+        this.productName = productName || '';
+        this.handle = handle || RootUtils.handleize(this.productName);
         this.productAttributeIds = stockItemLists ? [...new Set(stockItemLists.map(item => item.productAttributeId))] : [];
         this.productOptionIds = stockItemLists ? [...new Set(stockItemLists.map(item => item.productOptionId))] : [];
-        this.productAttributeList = [];
-        this.productOptionList = [];
+        this.productAttributeList = productAttributeList ? productAttributeList : [];
+        this.productOptionList = productOptionList ? productOptionList : [];
     }
 
     addAttribute(attribute: IProductAttribute): void {
+        console.log('add attribute',attribute)
         const index = this.productAttributeList.indexOf(attribute);
 
         if (index < 0) {

@@ -1,5 +1,30 @@
-<div class="page-layout blank p-24" rootPerfectScrollbar>
+<div id="manage-images" class="page-layout simple tabbed">
+    <div class="header p-24" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+        fxLayoutAlign.gt-sm="space-between end">
 
-    <h2>{{'PRODUCTS.TITLE' | translate}}</h2>
+        <div class="user-info" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="start center">
+            <div class="name" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                Manage Images
+            </div>
+        </div>
 
+        <div class="actions" fxLayout="row" fxLayoutAlign="end center" [@animate]="{value:'*',params:{delay:'200ms'}}">            
+            <button mat-raised-button color="primary" aria-label="Search">Search</button>
+        </div>
+
+    </div>
+
+    <div class="content">
+        <mat-tab-group dynamicHeight="true">
+
+            <mat-tab label="All">
+                <product-list></product-list>
+            </mat-tab>
+
+            <mat-tab label="Image Missing">
+                <!-- <profile-about></profile-about> -->
+            </mat-tab>
+        </mat-tab-group>
+    </div>
 </div>
