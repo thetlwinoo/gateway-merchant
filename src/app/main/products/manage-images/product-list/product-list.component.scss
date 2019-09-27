@@ -1,7 +1,16 @@
 @import "src/@root/scss/root";
 
+.overlay-image {
+    width: 256px;
+    height: 256px;
+}
+
 product-list {
     width: 100%;
+
+    .spinner-container mat-spinner {
+        margin: 130px auto 0 auto;
+    }
 
     .mat-table {
         background: transparent;
@@ -9,11 +18,11 @@ product-list {
 
         .mat-row {
             position: relative;
-            cursor: pointer;
+            // cursor: pointer;
             min-height: 64px;
         }
 
-        .mat-column-photoList{
+        .mat-column-photoList {
             word-wrap: unset !important;
         }
     }

@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatMenuModule, MatTooltipModule } from '@angular/material';
+import { MatMenuModule, MatTooltipModule, MatProgressSpinnerModule } from '@angular/material';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -33,6 +33,7 @@ import { TableModule } from 'primeng/table';
 import { EditorModule } from 'primeng/editor';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 import { NgxPicaModule } from '@digitalascetic/ngx-pica';
 @NgModule({
@@ -58,6 +59,7 @@ import { NgxPicaModule } from '@digitalascetic/ngx-pica';
         MatDialogModule,
         MatListModule,
         MatTooltipModule,
+        MatProgressSpinnerModule,
         NgxChartsModule,
         AgmCoreModule,
 
@@ -68,7 +70,8 @@ import { NgxPicaModule } from '@digitalascetic/ngx-pica';
         TableModule,
         EditorModule,
         InputTextModule,
-        DropdownModule
+        DropdownModule,
+        OverlayPanelModule
     ],
     exports: [
         FormsModule,
@@ -96,6 +99,7 @@ import { NgxPicaModule } from '@digitalascetic/ngx-pica';
         MatDialogModule,
         MatListModule,
         MatTooltipModule,
+        MatProgressSpinnerModule,
         NgxChartsModule,
         AgmCoreModule,
 
@@ -106,7 +110,8 @@ import { NgxPicaModule } from '@digitalascetic/ngx-pica';
         TableModule,
         EditorModule,
         InputTextModule,
-        DropdownModule
+        DropdownModule,
+        OverlayPanelModule
     ]
 })
 export class ResourceSharedLibsModule {

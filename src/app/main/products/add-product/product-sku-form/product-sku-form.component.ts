@@ -11,6 +11,7 @@ import { FetchActions, CategoryActions } from 'app/ngrx/products/actions';
 // import { ProductSku } from './product-sku.model';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 import { NgxPicaService, NgxPicaErrorInterface } from '@digitalascetic/ngx-pica';
+import { ImageUtils } from '@root/services/image-util.service';
 
 @Component({
   selector: 'product-sku-form',
@@ -49,7 +50,8 @@ export class ProductSkuFormComponent implements OnInit, OnDestroy {
     private _formBuilder: FormBuilder,
     protected dataUtils: JhiDataUtils,
     protected elementRef: ElementRef,
-    private _ngxPicaService: NgxPicaService
+    // private _ngxPicaService: NgxPicaService,
+    private imageUtils: ImageUtils,
   ) {
     // this.productSku = new ProductSku();
 
@@ -137,13 +139,31 @@ export class ProductSkuFormComponent implements OnInit, OnDestroy {
   }
 
   setFileData(event, entity, field, isImage) {
-    this.handleFiles(event, entity, 'thumbnailPhotoBlob', isImage);
-    this.dataUtils.setFileData(event, entity, field, isImage);
+    return new Promise((resolve, reject) => {
+      Promise.all([
+        this.imageUtils.handleFiles(event, entity, 'thumbnailPhotoBlob', isImage),
+        this.dataUtils.setFileData(event, entity, field, isImage)
+      ]).then(
+        () => {
+          resolve();
+        },
+        reject
+      );
+    });
   }
 
-  clearInputImage(event) {
-    this.dataUtils.clearInputImage(event, this.elementRef, 'thumbnailPhotoBlob', 'thumbnailPhotoBlobContentType', 'fileImage');
-    this.dataUtils.clearInputImage(event, this.elementRef, 'originalPhotoBlob', 'originalPhotoBlobContentType', 'fileImage');
+  clearInputImage(entity) {
+    return new Promise((resolve, reject) => {
+      Promise.all([
+        this.dataUtils.clearInputImage(entity, this.elementRef, 'thumbnailPhotoBlob', 'thumbnailPhotoBlobContentType', 'fileImage'),
+        this.dataUtils.clearInputImage(entity, this.elementRef, 'originalPhotoBlob', 'originalPhotoBlobContentType', 'fileImage')
+      ]).then(
+        () => {
+          resolve();
+        },
+        reject
+      );
+    });
   }
 
   addAttribute(event) {
@@ -156,40 +176,40 @@ export class ProductSkuFormComponent implements OnInit, OnDestroy {
     this.products.addOption(option);
   }
 
-  private toBase64(file: File, cb: Function) {
-    const fileReader: FileReader = new FileReader();
-    fileReader.onload = function (e: any) {
-      const base64Data = e.target.result.substr(e.target.result.indexOf('base64,') + 'base64,'.length);
-      cb(base64Data);
-    };
-    fileReader.readAsDataURL(file);
-  }
+  // private toBase64(file: File, cb: Function) {
+  //   const fileReader: FileReader = new FileReader();
+  //   fileReader.onload = function (e: any) {
+  //     const base64Data = e.target.result.substr(e.target.result.indexOf('base64,') + 'base64,'.length);
+  //     cb(base64Data);
+  //   };
+  //   fileReader.readAsDataURL(file);
+  // }
 
-  private handleFiles(event: any, entity, field: string, isImage: boolean): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (event && event.target && event.target.files && event.target.files[0]) {
-        const file: File = event.target.files[0];
-        const files: File[] = event.target.files;
-        if (isImage && !file.type.startsWith('image/')) {
-          reject(`File was expected to be an image but was found to be ${file.type}`);
-        } else {
-          this._ngxPicaService.resizeImages(files, 256, 256)
-            .subscribe((imageResized: File) => {
-              this.toBase64(imageResized, base64Data => {
-                entity[field] = base64Data;
-                entity[`${field}ContentType`] = file.type;
-                resolve(entity);
-              });
+  // private handleFiles(event: any, entity, field: string, isImage: boolean): Promise<any> {
+  //   return new Promise((resolve, reject) => {
+  //     if (event && event.target && event.target.files && event.target.files[0]) {
+  //       const file: File = event.target.files[0];
+  //       const files: File[] = event.target.files;
+  //       if (isImage && !file.type.startsWith('image/')) {
+  //         reject(`File was expected to be an image but was found to be ${file.type}`);
+  //       } else {
+  //         this._ngxPicaService.resizeImages(files, 256, 256)
+  //           .subscribe((imageResized: File) => {
+  //             this.toBase64(imageResized, base64Data => {
+  //               entity[field] = base64Data;
+  //               entity[`${field}ContentType`] = file.type;
+  //               resolve(entity);
+  //             });
 
-            }, (err: NgxPicaErrorInterface) => {
-              reject(err.err);
-            });
-        }
-      } else {
-        reject(`Base64 data was not set as file could not be extracted from passed parameter: ${event}`);
-      }
-    });
-  }
+  //           }, (err: NgxPicaErrorInterface) => {
+  //             reject(err.err);
+  //           });
+  //       }
+  //     } else {
+  //       reject(`Base64 data was not set as file could not be extracted from passed parameter: ${event}`);
+  //     }
+  //   });
+  // }
 
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions

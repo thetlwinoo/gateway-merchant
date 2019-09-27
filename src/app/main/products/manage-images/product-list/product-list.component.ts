@@ -10,6 +10,7 @@ import { StockItemsService, PhotosService } from '@root/services';
 import { StockItemsDataSource } from '@root/services';
 import { ImageUtils } from '@root/services/image-util.service';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'product-list',
@@ -44,6 +45,7 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
     protected dataUtils: JhiDataUtils,
     private imageUtils: ImageUtils,
     protected elementRef: ElementRef,
+    private _matSnackBar: MatSnackBar,
   ) {
     this._unsubscribeAll = new Subject();
   }
@@ -86,14 +88,62 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setFileData(event, entity, field, isImage) {
-    this.imageUtils.handleFiles(event, entity, 'thumbnailPhotoBlob', isImage);
-    this.dataUtils.setFileData(event, entity, field, isImage);
+    return new Promise((resolve, reject) => {
+      Promise.all([
+        this.imageUtils.handleFiles(event, entity, 'thumbnailPhotoBlob', isImage),
+        this.dataUtils.setFileData(event, entity, field, isImage)
+      ]).then(
+        () => {
+          if (entity.thumbnailPhotoBlob && entity.originalPhotoBlob) {
+            if (entity.id) {
+              this.stockItemsService.updatePhoto(entity).subscribe(data => {
+                this.loadAll();
+                this._matSnackBar.open('Photo Updated Successfully', 'Created', {
+                  verticalPosition: 'bottom',
+                  duration: 2000
+                });
+                resolve(data);
+              })
+            }
+            else {
+              this.stockItemsService.addPhoto(entity).subscribe(data => {
+                this.loadAll();
+                this._matSnackBar.open('Photo Created Successfully', 'Created', {
+                  verticalPosition: 'bottom',
+                  duration: 2000
+                });
+                resolve(data);
+              })
+            }
+
+          }
+        },
+        reject
+      );
+    });
   }
 
-  clearInputImage(event) {
-    this.dataUtils.clearInputImage(event, this.elementRef, 'thumbnailPhotoBlob', 'thumbnailPhotoBlobContentType', 'fileImage');
-    this.dataUtils.clearInputImage(event, this.elementRef, 'originalPhotoBlob', 'originalPhotoBlobContentType', 'fileImage');
+  clearInputImage(entity) {
+    return new Promise((resolve, reject) => {
+      Promise.all([
+        this.dataUtils.clearInputImage(entity, this.elementRef, 'thumbnailPhotoBlob', 'thumbnailPhotoBlobContentType', 'fileImage'),
+        this.dataUtils.clearInputImage(entity, this.elementRef, 'originalPhotoBlob', 'originalPhotoBlobContentType', 'fileImage')
+      ]).then(
+        () => {
+          this.photosService.deleteExtend(entity.id).subscribe(data => {
+            this.loadAll();
+            this._matSnackBar.open('Photo Deleted Successfully', 'Deleted', {
+              verticalPosition: 'bottom',
+              duration: 2000
+            });
+            resolve(data);
+          })
+        },
+        reject
+      );
+    });
   }
+
   ngOnDestroy(): void {
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();

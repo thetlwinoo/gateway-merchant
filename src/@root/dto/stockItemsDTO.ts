@@ -69,6 +69,7 @@ export class StockItemsDTO {
         this.stockItemHolding = stockItem.stockItemHolding || null;
         this.product = stockItem.product || null;
 
+        console.log('stockItem.photoLists',stockItem.photoLists)
         if (this.photoLists.length) {
             const tempPhotoList: PhotosDTO[] = [];
             this.photoLists.map(photo => {

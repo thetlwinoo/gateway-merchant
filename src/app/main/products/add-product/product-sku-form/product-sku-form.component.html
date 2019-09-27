@@ -124,7 +124,7 @@
                         <input hidden type="file" accept="image/*" [id]="photo.id" #originalBlob
                             [style.display]="'none'" (change)="setFileData($event, photo, 'originalPhotoBlob', true)" />
 
-                        <div class="upload-control" *ngIf="!photo.originalPhotoBlob;else preview">
+                        <div class="upload-control" *ngIf="!photo.thumbnailPhotoBlob;else preview">
                             <span>
                                 <!--  -->
                                 <div class="image-upload-btn" (click)="originalBlob.click()">
@@ -138,12 +138,12 @@
                             </span>
                         </div>
                         <ng-template #preview>
-                            <div>
+                            <div *ngIf="photo.thumbnailPhotoBlob">
                                 <a (click)="clearInputImage(photo)" class="close-image" matTooltip="Clear Image">
                                     <mat-icon>close</mat-icon>
                                 </a>
                             </div>
-                            <div class="image-preview">
+                            <div class="image-preview" *ngIf="photo.thumbnailPhotoBlob">
                                 <img [src]="'data:' + photo.thumbnailPhotoBlobContentType + ';base64,' + photo.thumbnailPhotoBlob"
                                     style="max-height: 100px;" alt="stock item image" draggable="false" />
                             </div>

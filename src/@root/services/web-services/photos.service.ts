@@ -12,11 +12,12 @@ type EntityArrayResponseType = HttpResponse<IPhotos[]>;
 @Injectable({ providedIn: 'root' })
 export class PhotosService {
     public resourceUrl = SERVER_API_URL + 'api/photos';
+    public extendUrl = SERVER_API_URL + 'api/photos-extend';
 
-    constructor(protected http: HttpClient) {}
+    constructor(protected http: HttpClient) { }
 
     create(photos: IPhotos): Observable<EntityResponseType> {
-        console.log('create photo',photos)
+        console.log('create photo', photos)
         return this.http.post<IPhotos>(this.resourceUrl, photos, { observe: 'response' });
     }
 
@@ -35,5 +36,18 @@ export class PhotosService {
 
     delete(id: number): Observable<HttpResponse<any>> {
         return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    }
+
+    deleteExtend(id: number): Observable<HttpResponse<any>> {
+        return this.http.delete<any>(`${this.extendUrl}/photos/${id}`, { observe: 'response' });
+    }
+
+    createExtend(photos: IPhotos): Observable<EntityResponseType> {
+        console.log('create photo', photos)
+        return this.http.post<IPhotos>(this.extendUrl + '/photos', photos, { observe: 'response' });
+    }
+
+    updateExtend(photos: IPhotos): Observable<EntityResponseType> {
+        return this.http.put<IPhotos>(this.extendUrl + '/photos', photos, { observe: 'response' });
     }
 }

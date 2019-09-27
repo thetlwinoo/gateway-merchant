@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { SERVER_API_URL, DATE_FORMAT } from '@root/constants';
 import { createRequestOption } from '@root/utils';
-import { IStockItems } from '@root/models';
+import { IStockItems, IPhotos } from '@root/models';
 
 type EntityResponseType = HttpResponse<IStockItems>;
 type EntityArrayResponseType = HttpResponse<IStockItems[]>;
@@ -14,12 +14,13 @@ type EntityArrayResponseType = HttpResponse<IStockItems[]>;
 @Injectable({ providedIn: 'root' })
 export class StockItemsService {
     public resourceUrl = SERVER_API_URL + 'api/stock-items';
+    public extendUrl = SERVER_API_URL + 'api/stock-items-extend';
 
     constructor(protected http: HttpClient) { }
 
     create(stockItems: IStockItems): Observable<EntityResponseType> {
         const copy = this.convertDateFromClient(stockItems);
-        console.log('check stock item',copy)
+        console.log('check stock item', copy)
         return this.http
             .post<IStockItems>(this.resourceUrl, copy, { observe: 'response' })
             .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
@@ -47,6 +48,14 @@ export class StockItemsService {
 
     delete(id: number): Observable<HttpResponse<any>> {
         return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    }
+
+    addPhoto(photos: IPhotos): Observable<EntityResponseType> {
+        return this.http.post<IPhotos>(this.extendUrl + '/photos', photos, { observe: 'response' });
+    }
+
+    updatePhoto(photos: IPhotos): Observable<EntityResponseType> {
+        return this.http.put<IPhotos>(this.extendUrl + '/photos', photos, { observe: 'response' });
     }
 
     protected convertDateFromClient(stockItems: IStockItems): IStockItems {
